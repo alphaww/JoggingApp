@@ -1,0 +1,12 @@
+﻿namespace JoggingApp.Core
+{
+    public interface IJogStorage
+    {
+        Task<IEnumerable<Jog>> SearchAsync(Guid userId, DateTime? from, DateTime? to);
+        Task<Jog> GetByUserIdJogIdAsync(Guid userId, Guid jogId);
+        Task InsertAsync(Jog jogToInsert);
+        Task UpdateAsync(Jog jogToUpdate);
+        Task DeleteAsync(Jog jogToDelete);
+
+    }
+}
