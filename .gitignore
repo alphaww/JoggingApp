@@ -1,0 +1,14 @@
+*.suo
+*.json
+*.dll
+*.pdb
+*.props
+*.targets
+*.cache
+*.cs
+*.txt
+*.editorconfig
+*.CopyComplete
+*.exe
+*.sentinel
+*.BuildWithSkipAnalyzers

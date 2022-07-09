@@ -42,10 +42,10 @@ namespace JoggingApp.Controllers
         }
 
         [HttpPut]
-        [Route("update")]
-        public async Task<IActionResult> UpdateAsync(JogUpdateRequest request)
+        [Route("{jogId:guid}/update")]
+        public async Task<IActionResult> UpdateAsync(Guid jogId, JogUpdateRequest request)
         {
-            var jog = await _jogStorage.GetByUserIdJogIdAsync(User.GetId(), request.Id);
+            var jog = await _jogStorage.GetByUserIdJogIdAsync(User.GetId(), jogId);
             if (jog is null)
             {
                 return BadRequest("Can't update jog record. You can update only existing jog records that you own.");
@@ -54,5 +54,17 @@ namespace JoggingApp.Controllers
             return Ok();
         }
 
+        [HttpDelete]
+        [Route("{jogId:guid}/delete")]
+        public async Task<IActionResult> DeleteAsync(Guid jogId)
+        {
+            var jog = await _jogStorage.GetByUserIdJogIdAsync(User.GetId(), jogId);
+            if (jog is null)
+            {
+                return BadRequest("Can't delete jog record. You can delete only existing jog records that you own.");
+            }
+            await _jogStorage.DeleteAsync(jog);
+            return Ok();
+        }
     }
 }
