@@ -20,6 +20,10 @@ namespace JoggingApp.EntityFramework
         {
             return await _context.Jogs.SingleOrDefaultAsync(jog => jog.UserId == userId && jog.Id == jogId);
         }
+        public async Task<Jog> GetByJogId(Guid jogId)
+        {
+            return await _context.Jogs.SingleOrDefaultAsync(jog => jog.Id == jogId);
+        }
 
         public async Task DeleteAsync(Jog jogToDelete)
         {
