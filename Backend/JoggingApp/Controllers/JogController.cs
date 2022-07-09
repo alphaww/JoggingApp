@@ -48,7 +48,7 @@ namespace JoggingApp.Controllers
             var jog = await _jogStorage.GetByUserIdJogIdAsync(User.GetId(), jogId);
             if (jog is null)
             {
-                return BadRequest("Can't update jog record. You can update only existing jog records that you own.");
+                return BadRequest($"Can't update jog record {jogId}. You can update only existing jog records that you own.");
             }
             await _jogStorage.UpdateAsync(jog);
             return Ok();
@@ -61,7 +61,7 @@ namespace JoggingApp.Controllers
             var jog = await _jogStorage.GetByUserIdJogIdAsync(User.GetId(), jogId);
             if (jog is null)
             {
-                return BadRequest("Can't delete jog record. You can delete only existing jog records that you own.");
+                return BadRequest($"Can't delete jog record {jogId}. You can delete only existing jog records that you own.");
             }
             await _jogStorage.DeleteAsync(jog);
             return Ok();
