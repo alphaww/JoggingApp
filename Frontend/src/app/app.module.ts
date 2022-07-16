@@ -16,6 +16,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { TextInputComponent } from './forms/text-input/text-input.component';
 import { DateInputComponent } from './forms/date-input/date-input.component';
+import { JogsListComponent } from './jogs/jogs-list/jogs-list.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { DateInputComponent } from './forms/date-input/date-input.component';
     NavComponent,
     HomeComponent,
     RegisterComponent,
+    JogsListComponent,
     TextInputComponent,
     DateInputComponent
   ],

@@ -9,7 +9,7 @@ import { JogService } from 'src/app/services/jog.service';
 })
 export class JogsListComponent implements OnInit {
 
-  private jogs: Jog[] = []
+ jogs: Jog[] = []
 
   constructor(private jogService: JogService) {
   }
