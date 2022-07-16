@@ -12,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.AddJwtAuthentication();
 builder.Services.AddSwaggerSetup();
+builder.Services.AddCors();
 
 var app = builder.Build();
 
@@ -21,6 +22,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseCustomSwaggerConfig();
 }
+
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.UseAuthentication();
 app.UseAuthorization();
