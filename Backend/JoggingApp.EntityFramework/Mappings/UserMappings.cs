@@ -10,6 +10,11 @@ namespace JoggingApp.EntityFramework.Mappings
         {
             builder.ToTable(nameof(User));
             builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.Email).IsRequired();
+            builder.Property(x => x.Password).IsRequired();
+
+            builder.HasIndex(x => x.Email).IsUnique();
         }
     }
 }
