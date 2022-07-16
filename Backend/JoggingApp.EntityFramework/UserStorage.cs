@@ -1,4 +1,5 @@
 ﻿using JoggingApp.Core;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace JoggingApp.EntityFramework
@@ -10,10 +11,28 @@ namespace JoggingApp.EntityFramework
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        public async Task SaveAsync(User user)
+
+        public async Task<UserRegistrationResult> SaveAsync(User user)
         {
             _context.Add(user);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            //Catch unique constraint violation by inspecting 2601 error code returned by SQL server
+            catch (DbUpdateException ex)
+            {
+                var innerException = ex.InnerException as SqlException;
+                if (innerException != null && innerException.Number == 2601)
+                {
+                    return UserRegistrationResult.Duplicate;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return UserRegistrationResult.Success;
         }
 
         public async Task<User> FindByEmailAndPasswordAsync(string email, string password)

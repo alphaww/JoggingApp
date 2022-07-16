@@ -24,8 +24,12 @@ namespace JoggingApp.Controllers
         public async Task<IActionResult> Register(UserRegisterRequest request)
         {
             var user = Core.User.Create(request.Email, request.Password, _hashService);
-            await _userStorage.SaveAsync(user);
-            return Ok();
+            var registrationResult = await _userStorage.SaveAsync(user);
+            if (registrationResult == UserRegistrationResult.Success)
+            {
+                return Ok();
+            }
+            return Conflict($"User with email {request.Email} already exists.");
         }
 
         [Route("authenticate")]
