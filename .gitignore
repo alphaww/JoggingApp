@@ -14,3 +14,5 @@
 *.BuildWithSkipAnalyzers
 Frontend/.angular/cache/14.0.6/angular-webpack/e5b4b6d41af8d80967d29f23b9fa575682bd389e/0.pack
 Frontend/.angular/cache/14.0.6/angular-webpack/e5b4b6d41af8d80967d29f23b9fa575682bd389e/index.pack
+*.pack
+*.old
