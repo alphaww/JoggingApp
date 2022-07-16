@@ -13,7 +13,9 @@ namespace JoggingApp.EntityFramework
 
         public async Task<IEnumerable<Jog>> SearchAsync(Guid userId, DateTime? from, DateTime? to)
         {
-            return await _context.Jogs.Where(jog => jog.Date >= from && jog.Date <= to).ToListAsync();
+            return await _context.Jogs.Where(jog => (!from.HasValue || jog.Date >= from) && (!to.HasValue || jog.Date <= to))
+                .OrderByDescending(jog => jog.Date)
+                .ToListAsync();
         }
 
         public async Task<Jog> GetByUserIdJogIdAsync(Guid userId, Guid jogId)

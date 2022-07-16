@@ -1,3 +1,12 @@
 <div class="text-center mt-3">
-    <h2>JOGS</h2>
+    <h2>Jogs</h2>
+</div>
+
+<div class="card" style="width: 100%;" *ngFor="let jog of jogs">
+<div class="card-body">
+    <h5 class="card-title">{{jog.date}}</h5>
+    <p class="card-text">{{jog.distance}}</p>
+    <p class="card-text">{{jog.time}}</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+</div>
 </div>

@@ -31,6 +31,14 @@
         public User User { get; private set; }
 
         public Guid UserId { get; private set; }
-        
+
+        public void Update(DateTime date, double distance, int time, double lattitude, double longitude)
+        {
+            Date = date;
+            Distance = distance;
+            Time = time;
+            Latitude = lattitude;
+            Longitude = longitude;
+        }       
     }
 }
