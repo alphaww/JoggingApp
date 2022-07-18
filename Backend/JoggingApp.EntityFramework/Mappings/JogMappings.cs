@@ -1,4 +1,5 @@
 ﻿using JoggingApp.Core;
+using JoggingApp.Core.Jogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

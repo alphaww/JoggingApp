@@ -1,4 +1,4 @@
-﻿namespace JoggingApp.Core
+﻿namespace JoggingApp.Core.Users
 {
     public interface IUserStorage
     {

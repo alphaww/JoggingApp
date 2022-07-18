@@ -1,4 +1,6 @@
 ﻿using JoggingApp.Core;
+using JoggingApp.Core.Jogs;
+using JoggingApp.Core.Users;
 using JoggingApp.EntityFramework;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;

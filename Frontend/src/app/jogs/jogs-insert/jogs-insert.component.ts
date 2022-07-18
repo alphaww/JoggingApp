@@ -28,11 +28,14 @@ export class JogsInsertComponent implements OnInit {
   }
 
   insert() {
-    this.jogService.insert(this.jogInsertForm.value).subscribe(response => {
-      this.toastr.show('successfully inserted a new jog entry.')
-    }, error => {
-      this.validationErrors = error;
-    })
+    this.jogService.insert(this.jogInsertForm.value)
+    .subscribe({
+      next: (response) => {
+        this.toastr.show('successfully inserted a new jog record.')
+        this.cancel()
+      },
+      error: (e) => console.error(e)
+    });
   }
 
   cancel() {

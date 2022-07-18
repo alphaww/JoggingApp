@@ -1,4 +1,5 @@
 ﻿using JoggingApp.Core;
+using JoggingApp.Core.Crypto;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JoggingApp.Setup

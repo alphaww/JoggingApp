@@ -1,4 +1,6 @@
-﻿namespace JoggingApp.Core
+﻿using JoggingApp.Core.Users;
+
+namespace JoggingApp.Core.Jogs
 {
     public class Jog
     {

@@ -1,4 +1,6 @@
-﻿namespace JoggingApp.Core
+﻿using JoggingApp.Core.Crypto;
+
+namespace JoggingApp.Core.Users
 {
     public class User
     {

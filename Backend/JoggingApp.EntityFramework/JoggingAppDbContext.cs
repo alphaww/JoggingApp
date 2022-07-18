@@ -1,4 +1,5 @@
-﻿using JoggingApp.Core;
+﻿using JoggingApp.Core.Jogs;
+using JoggingApp.Core.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace JoggingApp.EntityFramework

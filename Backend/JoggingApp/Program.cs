@@ -17,8 +17,6 @@ builder.AddJwtAuthentication();
 builder.Services.AddSwaggerSetup();
 builder.Services.AddCors();
 
-builder.Services.AddScoped<IValidator<UserRegisterRequest>, UserRegisterRequestValidator>();
-
 var app = builder.Build();
 
 //app.UseExceptionMiddleware();

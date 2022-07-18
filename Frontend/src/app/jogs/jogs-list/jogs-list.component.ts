@@ -11,7 +11,7 @@ export class JogsListComponent implements OnInit {
   saveMode = false;
   insertJogForm: boolean = false;
   updateJogForm: boolean = false;
- jogs: Jog[] = []
+  jogs: Jog[] = []
 
   constructor(private jogService: JogService) {
   }
@@ -22,11 +22,9 @@ export class JogsListComponent implements OnInit {
     });
   }
 
-
-
-
-  showNewJogForm() {
+  showInsertJogForm() {
     this.insertJogForm = true;
+    this.updateJogForm = false;
     this.saveMode = true;
   }
 

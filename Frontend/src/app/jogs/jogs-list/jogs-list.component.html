@@ -1,13 +1,16 @@
 
-<button class="btn btn-success" (click)="showNewJogForm()">Add New Jog</button>
+<button class="btn btn-success" (click)="showInsertJogForm()">Add New Jog</button>
 
 <app-jogs-insert *ngIf="insertJogForm && saveMode" (cancelSaveMode)="cancelSaveMode($event)" ></app-jogs-insert>
 
-<div class="card" style="width: 100%;" *ngFor="let jog of jogs">
-<div class="card-body">
-    <p class="card-title">{{jog.date}}</p>
-    <p class="card-text">{{jog.distance}}</p>
-    <p class="card-text">{{jog.time}}</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
-</div>
+<div class="card-holder" *ngIf="!saveMode">
+    <div class="card" style="width: 100%;" *ngFor="let jog of jogs">
+    <div class="card-body">
+        <p class="card-title">{{jog.date}}</p>
+        <p class="card-text">{{jog.distance}}</p>
+        <p class="card-text">{{jog.time}}</p>
+        <a href="#" class="btn btn-primary">Edit</a>
+        <a href="#" class="btn btn-primary">Delete</a>
+    </div>
+    </div>
 </div>
