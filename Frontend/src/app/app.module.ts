@@ -17,6 +17,7 @@ import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { TextInputComponent } from './forms/text-input/text-input.component';
 import { DateInputComponent } from './forms/date-input/date-input.component';
 import { JogsListComponent } from './jogs/jogs-list/jogs-list.component';
+import { JogsInsertComponent } from './jogs/jogs-insert/jogs-insert.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { JogsListComponent } from './jogs/jogs-list/jogs-list.component';
     HomeComponent,
     RegisterComponent,
     JogsListComponent,
+    JogsInsertComponent,
     TextInputComponent,
     DateInputComponent
   ],

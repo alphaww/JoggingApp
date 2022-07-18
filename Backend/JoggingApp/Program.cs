@@ -1,4 +1,6 @@
+using FluentValidation;
 using JoggingApp.Setup;
+using JoggingApp.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,11 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddStorage();
 builder.Services.AddServices();
 builder.Services.AddControllers();
+builder.Services.AddValidators();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.AddJwtAuthentication();
 builder.Services.AddSwaggerSetup();
 builder.Services.AddCors();
+
+builder.Services.AddScoped<IValidator<UserRegisterRequest>, UserRegisterRequestValidator>();
 
 var app = builder.Build();
 

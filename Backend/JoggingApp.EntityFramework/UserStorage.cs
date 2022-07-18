@@ -1,5 +1,4 @@
 ﻿using JoggingApp.Core;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace JoggingApp.EntityFramework
@@ -12,32 +11,20 @@ namespace JoggingApp.EntityFramework
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<UserRegistrationResult> SaveAsync(User user)
+        public async Task SaveAsync(User user, CancellationToken cancellation)
         {
             _context.Add(user);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            //Catch unique constraint violation by inspecting 2601 error code returned by SQL server
-            catch (DbUpdateException ex)
-            {
-                var innerException = ex.InnerException as SqlException;
-                if (innerException != null && innerException.Number == 2601)
-                {
-                    return UserRegistrationResult.Duplicate;
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return UserRegistrationResult.Success;
+            await _context.SaveChangesAsync(cancellation);
         }
 
-        public async Task<User> FindByEmailAndPasswordAsync(string email, string password)
+        public async Task<User> FindByEmailAsync(string email, CancellationToken cancellation)
         {
-            return await _context.Users.SingleOrDefaultAsync(user => user.Email == email && user.Password == password);
+            return await _context.Users.SingleOrDefaultAsync(user => user.Email == email, cancellation);
+        }
+
+        public async Task<User> FindByEmailAndPasswordAsync(string email, string password, CancellationToken cancellation)
+        {
+            return await _context.Users.SingleOrDefaultAsync(user => user.Email == email && user.Password == password, cancellation);
         }
     }
 }

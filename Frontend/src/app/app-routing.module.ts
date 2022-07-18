@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { AuthGuard } from './guards/auth.guard';
 import { JogsListComponent } from './jogs/jogs-list/jogs-list.component';
+import { JogsInsertComponent } from './jogs/jogs-insert/jogs-insert.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -11,7 +12,7 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     canActivate: [AuthGuard],
     children: [
-      {path: 'jogs', component: JogsListComponent},
+      {path: 'jogs', component: JogsListComponent}
     ]
   }
 ];

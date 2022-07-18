@@ -1,10 +1,11 @@
-<div class="text-center mt-3">
-    <h2>Jogs</h2>
-</div>
+
+<button class="btn btn-success" (click)="showNewJogForm()">Add New Jog</button>
+
+<app-jogs-insert *ngIf="insertJogForm && saveMode" (cancelSaveMode)="cancelSaveMode($event)" ></app-jogs-insert>
 
 <div class="card" style="width: 100%;" *ngFor="let jog of jogs">
 <div class="card-body">
-    <h5 class="card-title">{{jog.date}}</h5>
+    <p class="card-title">{{jog.date}}</p>
     <p class="card-text">{{jog.distance}}</p>
     <p class="card-text">{{jog.time}}</p>
     <a href="#" class="btn btn-primary">Go somewhere</a>

@@ -8,7 +8,9 @@ import { JogService } from 'src/app/services/jog.service';
   styleUrls: ['./jogs-list.component.css']
 })
 export class JogsListComponent implements OnInit {
-
+  saveMode = false;
+  insertJogForm: boolean = false;
+  updateJogForm: boolean = false;
  jogs: Jog[] = []
 
   constructor(private jogService: JogService) {
@@ -19,4 +21,17 @@ export class JogsListComponent implements OnInit {
       this.jogs = response;
     });
   }
+
+
+
+
+  showNewJogForm() {
+    this.insertJogForm = true;
+    this.saveMode = true;
+  }
+
+  cancelSaveMode(event: boolean) {
+    this.saveMode = event;
+  }
+
 }

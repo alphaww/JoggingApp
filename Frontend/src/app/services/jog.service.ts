@@ -20,4 +20,8 @@ export class JogService {
  
     return this.http.get<Jog[]>(url,{params:queryParams});
   }
+
+  insert(jog: Jog) {
+    return this.http.post(this.baseUrl + '/jog/insert', jog)
+  }
 }

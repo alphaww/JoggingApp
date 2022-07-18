@@ -12,7 +12,6 @@ import { Router } from '@angular/router';
 export class RegisterComponent implements OnInit {
   @Output() cancelRegister = new EventEmitter();
   registerForm: FormGroup;
-  maxDate: Date;
   validationErrors: string[] = [];
 
   constructor(private accountService: AccountService, private toastr: ToastrService, 
@@ -40,7 +39,7 @@ export class RegisterComponent implements OnInit {
 
   register() {
     this.accountService.register(this.registerForm.value).subscribe(response => {
-      this.toastr.show('successfully registered user!')
+      this.toastr.show('successfully registered user.')
     }, error => {
       this.validationErrors = error;
     })
