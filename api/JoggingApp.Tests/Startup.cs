@@ -1,11 +1,12 @@
 ﻿using FluentValidation;
 using JoggingApp.Core;
 using JoggingApp.Core.Crypto;
+using JoggingApp.Core.Email;
 using JoggingApp.Core.Jogs;
+using JoggingApp.Core.Templating;
 using JoggingApp.Core.Users;
 using JoggingApp.Core.Weather;
 using JoggingApp.EntityFramework;
-using JoggingApp.Infra;
 using JoggingApp.Jogs;
 using JoggingApp.Users;
 using Microsoft.EntityFrameworkCore;
@@ -24,12 +25,17 @@ namespace JoggingApp.Tests
             services.AddDbContext<JoggingAppDbContext>(options => options.UseInMemoryDatabase("testdb"));
             services.AddTransient<ITokenWriter, JwtSecurityTokenWriter>();
             services.AddTransient<IHashService, MD5HashService>();
+            services.AddTransient<IEmailSender, FakeEmailSender>();
+            services.AddTransient<IWeatherService, FakeWeatherService>();
+            services.AddTransient<ITemplateRenderer, FakeTemplateRenderer>();
             services.AddTransient<IUserStorage, UserStorage>();
             services.AddTransient<IJogStorage, JogStorage>();
-            services.AddTransient<IWeatherService, OpenWeatherService>();
 
-            services.AddScoped<IValidator<UserRegisterRequest>, UserRegisterRequestValidator>();
-            services.AddScoped<IValidator<UserAuthRequest>, UserAuthRequestValidator>();
+            services.AddTransient<IValidator<UserRegisterRequest>, UserRegisterRequestValidator>();
+            services.AddTransient<IValidator<UserAuthRequest>, UserAuthRequestValidator>();
+
+
+            services.AddTransient<UserRegisteredEmailTemplateRenderer>();
 
             services.AddTransient<UserController>();
             services.AddTransient<JogController>();

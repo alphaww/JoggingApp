@@ -1,5 +1,5 @@
-﻿using FluentValidation.Results;
-using JoggingApp.Core;
+﻿using JoggingApp.Core.Crypto;
+using JoggingApp.Core.Users;
 using JoggingApp.Users;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
@@ -9,10 +9,14 @@ namespace JoggingApp.Tests
     public class UserControllerTest
     {
         private readonly UserController _controller;
+        private readonly IUserStorage _userStorage;
+        private readonly IHashService _hashService;
       
-        public UserControllerTest(UserController controller)
+        public UserControllerTest(UserController controller, IUserStorage userStorage, IHashService hashService)
         {
             _controller = controller;
+            _userStorage = userStorage;
+            _hashService = hashService;
         }
 
         [Fact]
@@ -20,7 +24,7 @@ namespace JoggingApp.Tests
         {
             var request = new UserAuthRequest
             {
-                Email = "somedummy@gmail.com",
+                Email = "somedummy1@gmail.com",
                 Password = "1234"
             };
             // Act
@@ -31,43 +35,104 @@ namespace JoggingApp.Tests
         }
 
         [Fact]
-        public async void Authenticate_Should_Return_Ok_If_User_Is_Registered()
+        public async void Authenticate_Should_Return_Unauthorized_If_User_Is_Registered_But_Not_Confirmed()
         {
+            var email = "somedummy2@gmail.com";
+            var password = "aaba";
+
             var registerRequest = new UserRegisterRequest
             {
-                Email = "somedummy@gmail.com",
-                Password = "1234"
+                Email = email,
+                Password = password
             };
 
             await _controller.Register(registerRequest, CancellationToken.None);
 
             var authRequest = new UserAuthRequest
             {
-                Email = "somedummy@gmail.com",
-                Password = "1234"
+                Email = email,
+                Password = password
             };
-            // Act
+
             var result = await _controller.Atuhenticate(authRequest, CancellationToken.None);
 
-            // Assert
-            Assert.IsType<OkObjectResult>(result);
+            Assert.IsType<UnauthorizedResult>(result);
         }
 
         [Fact]
-        public async void Register_Should_Return_Conflict_If_Registering_User_That_Exists()
+        public async void Authenticate_Should_Return_Ok_If_User_Is_Registered_And_Confirmed()
         {
+            var email = "somedummy3@gmail.com";
+            var password = "ccxc";
+            var hashedPassword = _hashService.Hash(password);
+
             var registerRequest = new UserRegisterRequest
             {
-                Email = "somedummy@gmail.com",
-                Password = "1234"
+                Email = email,
+                Password = password
             };
 
             await _controller.Register(registerRequest, CancellationToken.None);
 
-            // Act
+            var registeredUser = await _userStorage.FindByEmailAsync(email, CancellationToken.None);
+
+            Assert.Single(registeredUser.ActivationTokens);
+
+            var activationToken = registeredUser.ActivationTokens.Single();
+
+            await _controller.Confirm(activationToken.Id, CancellationToken.None);
+
+            var registeredUser2 = await _userStorage.FindByEmailAsync(email, CancellationToken.None);
+
+            var authRequest = new UserAuthRequest
+            {
+                Email = email,
+                Password = password
+            };
+
+            var result = await _controller.Atuhenticate(authRequest, CancellationToken.None);
+
+            Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
+        public async void Register_Should_Create_A_Valid_New_Inactive_User_And_Return_Ok()
+        {
+            var email = "somedummy4@gmail.com";
+            var password = "zzoz";
+            var hashedPassword = _hashService.Hash(password);
+
+            var registerRequest = new UserRegisterRequest
+            {
+                Email = email,
+                Password = password
+            };
+
             var result = await _controller.Register(registerRequest, CancellationToken.None);
 
-            // Assert
+            var registeredUser = await _userStorage.FindByEmailAsync(email, CancellationToken.None);
+
+            Assert.Equal(email, registeredUser.Email);
+            Assert.Equal(hashedPassword, registeredUser.Password);
+            Assert.Equal(UserState.Inactive, registeredUser.State);
+            Assert.Single(registeredUser.ActivationTokens);
+
+            Assert.IsType<OkResult>(result);
+        }
+
+        [Fact]
+        public async void Register_Should_Return_Conflict_If_Registering_User_That_Already_Exists()
+        {
+            var registerRequest = new UserRegisterRequest
+            {
+                Email = "somedummy5@gmail.com",
+                Password = "aaac"
+            };
+
+            await _controller.Register(registerRequest, CancellationToken.None);
+
+            var result = await _controller.Register(registerRequest, CancellationToken.None);
+
             Assert.IsType<ConflictObjectResult>(result);
         }
 

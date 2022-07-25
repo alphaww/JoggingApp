@@ -25,4 +25,8 @@
     <ProjectReference Include="..\JoggingApp.EntityFramework\JoggingApp.EntityFramework.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="User\Templates\" />
+  </ItemGroup>
+
 </Project>

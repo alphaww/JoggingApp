@@ -16,6 +16,8 @@ namespace JoggingApp.EntityFramework.Mappings
             builder.Property(x => x.Password).IsRequired();
 
             builder.HasIndex(x => x.Email).IsUnique();
+            builder.HasMany(x => x.ActivationTokens).WithOne(x => x.User).HasForeignKey(x => x.UserId);
+
         }
     }
 }

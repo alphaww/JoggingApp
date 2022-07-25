@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using JoggingApp.Middleware;
+using Microsoft.AspNetCore.Builder;
 
 namespace JoggingApp.Setup
 {

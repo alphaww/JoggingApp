@@ -4,8 +4,10 @@ namespace JoggingApp.Tests
 {
     public class FakeWeatherService : IWeatherService
     {
+        public bool WasCalled { get; private set; }
         public Task<WeatherInfo> FetchWeatherInfo(Coordinates coordinates)
         {
+            WasCalled = true;
             return Task.FromResult(new WeatherInfo
             {
                 Description = "test",

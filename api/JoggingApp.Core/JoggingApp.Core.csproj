@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <Folder Include="Email\" />
+    <Folder Include="Templating\" />
   </ItemGroup>
 
 </Project>
