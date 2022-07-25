@@ -45,3 +45,13 @@ api/JoggingApp/obj/Debug/net6.0/JoggingApp.AssemblyInfoInputs.cache
 api/JoggingApp/obj/Debug/net6.0/JoggingApp.assets.cache
 api/JoggingApp/obj/Debug/net6.0/JoggingApp.csproj.AssemblyReference.cache
 api/JoggingApp/obj/Debug/net6.0/JoggingApp.GeneratedMSBuildEditorConfig.editorconfig
+*.suo
+*.json
+*.dll
+*.pdb
+*.cache
+*.txt
+*.CopyComplete
+*.exe
+*.sentinel
+*.cs
