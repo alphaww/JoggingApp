@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { AccountService } from '../services/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { map } from 'rxjs/operators';
+import { ValidationErrorsService } from '../services/validation.errors.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class AuthGuard implements CanActivate {
         var user = this.accountService.currentUser;
         if (user) return true;
         this.toastr.error('401 Unauthorized') 
+        return false;
   }
   
 }

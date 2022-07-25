@@ -68,3 +68,4 @@ spa/.angular/cache/14.1.0/angular-webpack/720ded7890f8528e2638aecc0f94ee65c62cdf
 spa/.angular/cache/14.1.0/angular-webpack/720ded7890f8528e2638aecc0f94ee65c62cdf94/7.pack
 spa/.vscode/launch.json
 api/.vs/JoggingApp/v17/TestStore/0/002.testlog
+*.pack

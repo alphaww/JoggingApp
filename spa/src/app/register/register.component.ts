@@ -1,8 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { AccountService } from '../services/account.service';
 import { ToastrService } from 'ngx-toastr';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ConfirmService } from '../services/confirm.service';
 
 @Component({
   selector: 'app-register',
@@ -13,7 +14,7 @@ export class RegisterComponent implements OnInit {
   @Output() cancelRegister = new EventEmitter();
   registerForm: FormGroup;
 
-  constructor(private accountService: AccountService, private toastr: ToastrService,  private fb: FormBuilder, private router: Router) { }
+  constructor(private accountService: AccountService, private toastr: ToastrService,  private fb: FormBuilder, private router: Router, private confirmService: ConfirmService) { }
 
   ngOnInit(): void {
     this.intitializeForm();
@@ -38,6 +39,10 @@ export class RegisterComponent implements OnInit {
   register() {
     this.accountService.register(this.registerForm.value).subscribe(response => {
       this.toastr.success('Successfully registered user.', 'User registered')
+      this.confirmService.confirm('Registration almost done', 'Email containing activation link should arrive shortly to your email').subscribe(result => {
+        location.reload();
+      })
+
     })
   }
 

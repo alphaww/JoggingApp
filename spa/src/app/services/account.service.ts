@@ -28,13 +28,11 @@ export class AccountService {
   }
 
   register(model: any) {
-    return this.http.post(this.baseUrl + '/user/register', model).pipe(
-      map((user: User) => {
-        if (user) {
-         this.setCurrentUser(user);
-        }
-      })
-    )
+    return this.http.post(this.baseUrl + '/user/register', model)
+  }
+
+  confirm(activationId: any) {
+    return this.http.get(this.baseUrl + '/user/' + activationId + '/confirm')
   }
 
   setCurrentUser(user: User) {

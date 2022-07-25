@@ -20,13 +20,17 @@ import { JogsListComponent } from './jogs/jogs-list/jogs-list.component';
 import { JogsInsertComponent } from './jogs/jogs-insert/jogs-insert.component';
 import { TimeInputComponent } from './forms/time-input/time-input.component';
 import { JogsUpdateComponent } from './jogs/jogs-update/jogs-update.component';
+import { ConfirmAccountComponent } from './register/confirm-account/confirm-account.component';
+import { ValidationErrorsDialogComponent } from './modals/validation-errors-dialog/validation-errors-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavComponent,
     HomeComponent,
+    ValidationErrorsDialogComponent,
     RegisterComponent,
+    ConfirmAccountComponent,
     JogsListComponent,
     JogsInsertComponent,
     JogsUpdateComponent,

@@ -20,9 +20,9 @@ namespace JoggingApp.Users
             dynamic model = new ExpandoObject();
             model.Email = activationToken.User.Email;
 
-            string url = _configuration["Service:Url"];
+            string url = _configuration["BaseUrls:Spa"];
 
-            model.ActivationLink = $"{url}/{activationToken.Id}/confirm-account";
+            model.ActivationLink = $"{url}/confirm-account/{activationToken.Id}";
 
             var mailBody = await _templateRenderer.RenderTemplateToStringAsync("User/Templates/confirm-account.cshtml", model);
 
