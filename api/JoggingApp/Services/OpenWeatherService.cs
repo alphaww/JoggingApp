@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace JoggingApp.Infra
+namespace JoggingApp.Services
 {
     public class OpenWeatherService : IWeatherService
     {

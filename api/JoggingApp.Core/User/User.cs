@@ -4,10 +4,11 @@ namespace JoggingApp.Core.Users
 {
     public class User
     {
-        public static (User, UserActivationToken) Create(string email, string password, int expiresInMinutes, IHashService hashService)
+        public static (User, UserActivationToken) Create(string email, string password, IHashService hashService)
         {
             var user = new User(Guid.NewGuid(), email, hashService.Hash(password), UserState.Inactive);
-            var activationToken = new UserActivationToken(DateTime.UtcNow, DateTime.UtcNow.AddMinutes(expiresInMinutes), user);
+            //Expiration time shouldd not be hardcoded. But will leave it as is for this demo purpose
+            var activationToken = new UserActivationToken(DateTime.UtcNow, DateTime.UtcNow.AddMinutes(2), user);
             user.ActivationTokens.Add(activationToken);
             return (user, activationToken);
         }
@@ -34,7 +35,6 @@ namespace JoggingApp.Core.Users
         public void Activate()
         {
             State = UserState.Active;
-            ActivationTokens.Clear();
         }
 
         public bool HasValidActivationToken()

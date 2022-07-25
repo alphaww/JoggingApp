@@ -14,7 +14,7 @@ namespace JoggingApp.EntityFramework
         }
 
         public DbSet<User> Users { get; set; }
-
+        public DbSet<UserActivationToken> UserActivationTokens { get; set; }
         public DbSet<Jog> Jogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -55,7 +55,7 @@ namespace JoggingApp.Users
             {
                 return Conflict($"User with email {request.Email} already exists.");
             }
-            var (user, activationToken) = Core.Users.User.Create(request.Email, request.Password, 2, _hashService);
+            var (user, activationToken) = Core.Users.User.Create(request.Email, request.Password, _hashService);
             await _userStorage.InsertAsync(user, cancellation);
             var emailTemplate = await _userRegisteredEmailTemplateRenderer.RenderForUserActivationToken(activationToken);
             await _emailSender.SendAsync(new MailMessage(request.Email, "Confirm account", emailTemplate));
@@ -82,7 +82,7 @@ namespace JoggingApp.Users
         }
 
         [HttpGet]
-        [Route("{activationTokenId:guid}/confirm-account")]
+        [Route("{activationTokenId:guid}/confirm")]
         public async Task<IActionResult> Confirm(Guid activationTokenId, CancellationToken cancellation)
         {
             var user = await _userStorage.FindByActivationTokenId(activationTokenId, cancellation);
@@ -95,7 +95,7 @@ namespace JoggingApp.Users
                 return BadRequest($"Your activation token has expired.");
             }
             user.Activate();
-            await _userStorage.UpdateAsync(user, cancellation);
+            await _userStorage.ConfirmAsync(user, cancellation);
             return Ok();
         }
     }

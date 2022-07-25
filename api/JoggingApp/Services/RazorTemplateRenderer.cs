@@ -13,7 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DotMetrics.Api.Infrastructure.Templating
+namespace JoggingApp.Services
 {
     public class RazorTemplateRenderer : ITemplateRenderer
     {
@@ -38,15 +38,15 @@ namespace DotMetrics.Api.Infrastructure.Templating
 
             using var output = new StringWriter();
             var viewContext = new ViewContext(
-actionContext,
-view,
-new ViewDataDictionary<TModel>(new EmptyModelMetadataProvider(), new ModelStateDictionary())
-{
-Model = model
-},
-new TempDataDictionary(actionContext.HttpContext, _tempDataProvider),
-output,
-new HtmlHelperOptions());
+                actionContext,
+                view,
+                new ViewDataDictionary<TModel>(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+                {
+                Model = model
+                },
+                new TempDataDictionary(actionContext.HttpContext, _tempDataProvider),
+                output,
+                new HtmlHelperOptions());
 
             await view.RenderAsync(viewContext);
 

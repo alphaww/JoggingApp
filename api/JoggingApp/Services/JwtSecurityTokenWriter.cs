@@ -8,7 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace JoggingApp
+namespace JoggingApp.Services
 {
     public class JwtSecurityTokenWriter : ITokenWriter
     {

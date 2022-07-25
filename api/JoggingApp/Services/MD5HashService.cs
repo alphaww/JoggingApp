@@ -4,7 +4,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace JoggingApp
+namespace JoggingApp.Services
 {
     public class MD5HashService : IHashService
     {

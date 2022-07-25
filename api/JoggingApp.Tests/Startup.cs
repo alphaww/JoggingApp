@@ -8,6 +8,7 @@ using JoggingApp.Core.Users;
 using JoggingApp.Core.Weather;
 using JoggingApp.EntityFramework;
 using JoggingApp.Jogs;
+using JoggingApp.Services;
 using JoggingApp.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

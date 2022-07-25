@@ -22,14 +22,15 @@ namespace JoggingApp.Services
         public EmailSender(IConfiguration configuration)
         {
             _smtpServer = configuration["Email:SmtpServer"];
-            _smtpPort = int.Parse(configuration["Email:SmtpPort"]);
-            _smtpPort = _smtpPort == 0 ? 25 : _smtpPort;
+            _ = int.TryParse(configuration["Email:SmtpPort"], out int port);
+            _smtpPort = _smtpPort == 0 ? 25 : port;
             _fromAddress = configuration["Email:FromAddress"];
             _fromAddressTitle = configuration["Email:FromAddressTitle"];
             _replyFromAddressTitle = configuration["Email:ReplyFromAddressTitle"];
             _username = configuration["Email:SmtpUsername"];
             _password = configuration["Email:SmtpPassword"];
-            _enableSsl = bool.Parse(configuration["Email:EnableSsl"]);
+            _ = bool.TryParse(configuration["Email:EnableSsl"], out bool useSsl);
+            _enableSsl = useSsl;
             _useDefaultCredentials = bool.Parse(configuration["Email:UseDefaultCredentials"]);
         }
 
@@ -46,8 +47,10 @@ namespace JoggingApp.Services
                     mimeMessage.To.Add(MailboxAddress.Parse(addr));
 
             mimeMessage.Subject = message.Subject;
+
             foreach (var replyTo in message.ReplyToAddresses)
                 mimeMessage.ReplyTo.Add(new MailboxAddress(_replyFromAddressTitle, replyTo));
+
 
             var bodyBuilder = new BodyBuilder
             {

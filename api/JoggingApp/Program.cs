@@ -9,7 +9,7 @@ builder.AddStorage();
 builder.Services.AddWeatherService();
 builder.Services.AddHttpClient();
 builder.Services.AddServices();
-builder.Services.AddControllers();
+builder.Services.AddControllersWithViews();
 builder.Services.AddValidators();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -2,16 +2,6 @@
 {
     public class MailMessage
     {
-        public MailMessage(string mailTo, string subject, string body, ICollection<Attachment> att = null)
-        {
-            MailTo = new List<string>() { mailTo };
-            Attachments = att ?? new List<Attachment>();
-            MailFrom = null;
-            Cc = null;
-            Subject = subject;
-            Body = body;
-        }
-
         public MailMessage(string[] mailTo, string subject, string body, ICollection<Attachment> att = null, ICollection<string> replyToAddresses = null, bool useBcc = false)
         {
             MailTo = new List<string>();
@@ -26,6 +16,17 @@
             foreach (var addr in mailTo)
                 MailTo.Add(addr);
 
+        }
+
+
+        public MailMessage(string mailTo, string subject, string body, ICollection<Attachment> att)
+            : this(new string[] { mailTo }, subject, body, att)
+        {
+        }
+
+        public MailMessage(string mailTo, string subject, string body)
+             : this(mailTo, subject, body, null)
+        {
         }
 
         public ICollection<string> MailTo { get; private set; }

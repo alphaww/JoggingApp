@@ -1,6 +1,5 @@
 ﻿using JoggingApp.Core.Weather;
-using JoggingApp.Infra;
-using Microsoft.AspNetCore.Builder;
+using JoggingApp.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JoggingApp.Setup

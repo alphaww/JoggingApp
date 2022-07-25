@@ -13,18 +13,15 @@ namespace JoggingApp.EntityFramework
 
         public async Task InsertAsync(User user, CancellationToken cancellation)
         {
-            _context.Entry(user).State = EntityState.Added;
+            _context.Users.Add(user);
             await _context.SaveChangesAsync(cancellation);
         }
 
-        public async Task UpdateAsync(User user, CancellationToken cancellation)
+        public async Task ConfirmAsync(User user, CancellationToken cancellation)
         {
             _context.ChangeTracker.Clear();
-            _context.Entry(user).State = EntityState.Modified;
-            foreach(var activationToken in user.ActivationTokens)
-            {
-                _context.Entry(activationToken).State = EntityState.Deleted;
-            }
+            _context.Users.Update(user);
+            _context.UserActivationTokens.RemoveRange(user.ActivationTokens);
             await _context.SaveChangesAsync(cancellation);
         }
 
