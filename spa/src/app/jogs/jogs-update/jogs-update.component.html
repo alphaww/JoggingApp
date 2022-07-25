@@ -1,0 +1,12 @@
+<form [formGroup]='jogUpdateForm' (ngSubmit)="jogUpdateForm.valid && update()" autocomplete="off">
+    <h2 class="text-center text-primary">Update existing jog entry</h2>
+
+    <label id="jog-date-label" class='form-label'>Jog entry date: {{jogDate | date}}</label>
+    <app-time-input [formControl]='jogUpdateForm.controls["time"]' [label]='"Time spent running in {hours:minutes:seconds}"'></app-time-input> 
+    <app-text-input [formControl]='jogUpdateForm.controls["distance"]'  [label]='"Distance covered in meters"' [type]='"number"'></app-text-input>
+
+    <div class="form-group text-center">
+        <button [disabled]='!jogUpdateForm.valid' class="btn btn-success mr-2" type="submit">Submit</button>
+        <button class="btn btn-default mr-2" (click)="cancel()" type="button">Cancel</button>
+    </div>
+</form>

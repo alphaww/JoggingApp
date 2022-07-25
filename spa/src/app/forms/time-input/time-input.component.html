@@ -1,0 +1,6 @@
+<div class="form-group">
+  <label>{{label}}</label>
+  <timepicker [showMeridian]="false" [showSeconds]="true" [readonlyInput]="false"  [hourStep]="1" [minuteStep]="1" [secondsStep]="1" [mousewheel]="true"
+        [class.is-invalid]='ngControl.touched && ngControl.invalid'
+        [formControl]='ngControl.control'></timepicker>
+</div>

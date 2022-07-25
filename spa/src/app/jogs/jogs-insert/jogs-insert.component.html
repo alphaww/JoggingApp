@@ -1,0 +1,15 @@
+<form [formGroup]='jogInsertForm' (ngSubmit)="jogInsertForm.valid && insert()" autocomplete="off">
+    <h2 class="text-center text-primary">Insert new jog entry</h2>
+
+    <label id="jog-date-label" class='form-label'>Jog entry date: {{currentDate | date}}</label>
+    <app-time-input [formControl]='jogInsertForm.controls["time"]' [label]='"Time spent running in {hours:minutes:seconds}"'></app-time-input> 
+    <app-text-input [formControl]='jogInsertForm.controls["distance"]'  [label]='"Distance covered in meters"' [type]='"number"'></app-text-input>
+    <app-text-input [formControl]='coordinates.controls["latitude"]'  [label]='"Latitude"' [type]='"number"'></app-text-input>
+    <app-text-input [formControl]='coordinates.controls["longitude"]'  [label]='"Longitude"' [type]='"number"'></app-text-input> 
+
+
+    <div class="form-group text-center">
+        <button [disabled]='!jogInsertForm.valid' class="btn btn-success mr-2" type="submit">Submit</button>
+        <button class="btn btn-default mr-2" (click)="cancel()" type="button">Cancel</button>
+    </div>
+</form>

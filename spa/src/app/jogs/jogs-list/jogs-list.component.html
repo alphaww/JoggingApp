@@ -1,0 +1,60 @@
+
+<a routerLink="insert" class="btn btn-success add-jog">Add New Jog</a>
+
+<div class="row">
+
+    <div class="row search-bar">
+    <div class="col-10">
+        <input type="text"
+                placeholder="Search jog entries by date from - date to"
+                class="form-control"
+                bsDaterangepicker
+                [(ngModel)]="searchByDateRange"
+                [bsConfig]="bsConfig">
+    </div>
+
+        <button class="btn btn-success col-2" (click)="search()">Search</button>
+    </div>
+
+</div>
+
+<div class="card-holder">
+    <div class="card border-secondary jog-card" *ngFor="let jog of jogs">
+
+    <div class="card-body">
+        <table class="table table-borderless table-hover">
+            <tbody>
+              <tr>
+                <td><span>Running date:</span></td>
+                <td><p>{{jog.date | date}}</p></td>
+              </tr>
+              <tr>
+                <td><span>Elapsed time (hh:mm:ss):</span></td>
+                <td><p>{{jog.time}}</p></td>
+              </tr>
+              <tr>
+                <td><span>Distance covered:</span></td>
+                <td><p>{{jog.distance | number}} meters</p></td>
+              </tr>
+              <tr>
+                <td><span>Average running speed:</span></td>
+                <td><p>{{jog.averageSpeed | number}} km/h</p></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="card text-center">
+            <span>You were running at {{jog.location.location}} (lat: {{jog.location.latitude}}°, lon: {{jog.location.longitude}}°). 
+              The weather was {{jog.location.description}} with temperature {{jog.location.temperature}} ℃ that feels like {{jog.location.feelsLikeTemperature}} ℃.
+            </span>
+          </div>
+
+          <div  class="container jog-card-button-group">
+            <div class="col-md-12 text-center">
+                <a routerLink='update/{{jog.id}}' class="btn btn-primary">Edit</a>
+                <button type="button" class="btn btn-warning" (click)="delete(jog)">Delete</button>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
