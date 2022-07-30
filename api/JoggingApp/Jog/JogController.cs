@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using JoggingApp.Core.Jogs;
 using JoggingApp.Core.Weather;
-using JoggingApp.Infra;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

@@ -11,6 +11,7 @@ import { JogService } from 'src/app/services/jog.service';
 })
 export class JogsUpdateComponent implements OnInit {
   jogUpdateForm: FormGroup;
+  time: FormGroup;
 
    public get jogDate() {
     return this.jogUpdateForm.controls['date'].value
@@ -21,8 +22,14 @@ export class JogsUpdateComponent implements OnInit {
       id: [''],
       date: [''],
       distance: ['', Validators.required],
-      time: ['', Validators.required]
+      // time: ['', Validators.required]
+      time: this.fb.group({
+        hours: ['',  Validators.required],
+        minutes: ['',  Validators.required],
+        seconds: ['',  Validators.required]
+      })
     })
+    this.time = this.jogUpdateForm.controls['time'] as FormGroup
   }
 
   ngOnInit(): void {

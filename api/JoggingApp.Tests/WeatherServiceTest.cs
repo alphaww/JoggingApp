@@ -1,5 +1,4 @@
 ﻿using JoggingApp.Core.Weather;
-using JoggingApp.Infra;
 using Xunit;
 
 namespace JoggingApp.Tests

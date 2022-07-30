@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace JoggingApp.Jogs
+﻿namespace JoggingApp.Jogs
 {
     public class JogUpdateRequest
     {
         public int Distance { get; set; }
 
-        public string Time { get; set; }
+        public RunningTimeDto Time { get; set; }
     }
 }

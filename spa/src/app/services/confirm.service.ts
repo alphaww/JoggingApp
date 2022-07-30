@@ -21,7 +21,8 @@ export class ConfirmService {
           message,
           btnOkText,
           btnCancelText
-        }
+        },
+        class: 'modal-lg'
       }
     this.bsModelRef = this.modalService.show(ConfirmDialogComponent, config);
     

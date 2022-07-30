@@ -2,7 +2,12 @@
     <h2 class="text-center text-primary">Update existing jog entry</h2>
 
     <label id="jog-date-label" class='form-label'>Jog entry date: {{jogDate | date}}</label>
-    <app-time-input [formControl]='jogUpdateForm.controls["time"]' [label]='"Time spent running in {hours:minutes:seconds}"'></app-time-input> 
+    <!-- <app-time-input [formControl]='jogUpdateForm.controls["time"]' [label]='"Time spent running in {hours:minutes:seconds}"'></app-time-input>  -->
+
+    <app-text-input [formControl]='time.controls["hours"]'  [label]='"Running time (hours)"' [type]='"number"'></app-text-input>
+    <app-text-input [formControl]='time.controls["minutes"]'  [label]='"Running time (minutes)"' [type]='"number"'></app-text-input> 
+    <app-text-input [formControl]='time.controls["seconds"]'  [label]='"Running time (seconds)"' [type]='"number"'></app-text-input>
+
     <app-text-input [formControl]='jogUpdateForm.controls["distance"]'  [label]='"Distance covered in meters"' [type]='"number"'></app-text-input>
 
     <div class="form-group text-center">

@@ -1,6 +1,4 @@
 ﻿using JoggingApp.Core.Jogs;
-using JoggingApp.Core.Weather;
-using JoggingApp.Infra;
 using System;
 
 namespace JoggingApp.Jogs
@@ -9,17 +7,23 @@ namespace JoggingApp.Jogs
     {
         public Guid Id { get; set; }
         public DateTime Date { get; set; }
-
         public int Distance { get; set; }
-
-        public string Time { get; set; }
+        public RunningTimeDto Time { get; set; }
 
         public double AverageSpeed
         {
             get
             {
                 var timeSpan = Time.ToTimeSpan();
-                return timeSpan.TotalHours / Distance;
+                return timeSpan.TotalHours / (Distance / 1000.0);
+            }
+        }
+
+        public string FormattedTime
+        {
+            get
+            {
+                return Time.ToTimeSpan().ToString();
             }
         }
 
@@ -29,8 +33,13 @@ namespace JoggingApp.Jogs
         {
             Id = jog.Id;
             Date = jog.Date;
-            Time = jog.Time.ToString();
             Distance = jog.Distance;
+            Time = new RunningTimeDto
+            {
+                Hours = jog.Time.Hours,
+                Minutes = jog.Time.Minutes,
+                Seconds = jog.Time.Seconds
+            };
 
             if (jog.JogLocation is not null)
             {
