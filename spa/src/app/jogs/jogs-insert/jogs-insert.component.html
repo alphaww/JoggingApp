@@ -11,6 +11,8 @@
     <app-text-input [formControl]='coordinates.controls["latitude"]'  [label]='"Latitude"' [type]='"number"'></app-text-input>
     <app-text-input [formControl]='coordinates.controls["longitude"]'  [label]='"Longitude"' [type]='"number"'></app-text-input> 
 
+    <button class="btn btn-link" type="button" (click)="fillInCoordinates()">Get my location</button>
+
     <div class="form-group text-center">
         <button [disabled]='!jogInsertForm.valid' class="btn btn-success mr-2" type="submit">Submit</button>
         <button class="btn btn-default mr-2" (click)="cancel()" type="button">Cancel</button>

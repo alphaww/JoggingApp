@@ -56,4 +56,20 @@ export class JogsInsertComponent implements OnInit {
   cancel() {
     this.router.navigateByUrl('jogs')
   }
+
+  fillInCoordinates() {
+    if(navigator.geolocation){
+           navigator.geolocation.getCurrentPosition(position => {
+            const coordinates = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            }
+            this.coordinates.patchValue(coordinates);
+           }, 
+           error => {
+            this.toastr.warning('Your browser does not support geo location.', 'Geo location unsupported');
+           });
+        }
+
+  }
 }
