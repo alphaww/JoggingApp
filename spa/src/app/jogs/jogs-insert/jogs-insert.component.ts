@@ -37,6 +37,10 @@ export class JogsInsertComponent implements OnInit {
   }
 
   insert() {
+    //This is probably a hack. There is surely a more elegant solution to handle nested groups in FormGroup to propagate null.
+    if (!this.jogInsertForm.value.coordinates.latitude || !this.jogInsertForm.value.coordinates.longitude) {
+      this.jogInsertForm.value.coordinates = null;
+    }
     this.jogService.insert(this.jogInsertForm.value)
     .subscribe({
       next: (response) => {
