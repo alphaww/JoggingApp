@@ -70,3 +70,5 @@ spa/.vscode/launch.json
 api/.vs/JoggingApp/v17/TestStore/0/002.testlog
 *.pack
 api/.vs/JoggingApp/v17/.futdcache.v1
+api/JoggingApp/obj/Debug/net6.0/JoggingApp.csproj.BuildWithSkipAnalyzers
+*.manifest

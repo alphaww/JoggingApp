@@ -8,7 +8,7 @@
     <app-text-input [formControl]='time.controls["minutes"]'  [label]='"Running time (minutes)"' [type]='"number"'></app-text-input> 
     <app-text-input [formControl]='time.controls["seconds"]'  [label]='"Running time (seconds)"' [type]='"number"'></app-text-input>
 
-    <app-text-input [formControl]='jogUpdateForm.controls["distance"]'  [label]='"Distance covered in meters"' [type]='"number"'></app-text-input>
+    <app-text-input [formControl]='jogUpdateForm.controls["distance"]'  [label]='"Distance covered (meters)"' [type]='"number"'></app-text-input>
 
     <div class="form-group text-center">
         <button [disabled]='!jogUpdateForm.valid' class="btn btn-success mr-2" type="submit">Submit</button>

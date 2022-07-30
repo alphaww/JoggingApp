@@ -4,11 +4,10 @@
     <label id="jog-date-label" class='form-label'>Jog entry date: {{currentDate | date}}</label>
     <!-- <app-time-input [formControl]='jogInsertForm.controls["time"]' [label]='"Time spent running in {hours:minutes:seconds}"'></app-time-input>  -->
 
-    <app-text-input [formControl]='ttime.controls["hours"]'  [label]='"Running time (hours)"' [type]='"number"'></app-text-input>
-    <app-text-input [formControl]='ttime.controls["minutes"]'  [label]='"Running time (minutes)"' [type]='"number"'></app-text-input> 
-    <app-text-input [formControl]='ttime.controls["seconds"]'  [label]='"Running time (seconds)"' [type]='"number"'></app-text-input>
-
-    <app-text-input [formControl]='jogInsertForm.controls["distance"]'  [label]='"Distance covered in meters"' [type]='"number"'></app-text-input>
+    <app-text-input [formControl]='time.controls["hours"]'  [label]='"Running time (hours)"' [type]='"number"'></app-text-input>
+    <app-text-input [formControl]='time.controls["minutes"]'  [label]='"Running time (minutes)"' [type]='"number"'></app-text-input> 
+    <app-text-input [formControl]='time.controls["seconds"]'  [label]='"Running time (seconds)"' [type]='"number"'></app-text-input>
+    <app-text-input [formControl]='jogInsertForm.controls["distance"]'  [label]='"Distance covered (meters)"' [type]='"number"'></app-text-input>
     <app-text-input [formControl]='coordinates.controls["latitude"]'  [label]='"Latitude"' [type]='"number"'></app-text-input>
     <app-text-input [formControl]='coordinates.controls["longitude"]'  [label]='"Longitude"' [type]='"number"'></app-text-input> 
 

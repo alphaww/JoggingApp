@@ -29,8 +29,8 @@
                 <td><p>{{jog.date | date}}</p></td>
               </tr>
               <tr>
-                <td><span>Elapsed time (hh:mm:ss):</span></td>
-                <td><p>{{jog.time}}</p></td>
+                <td><span>Elapsed time:</span></td>
+                <td><p>{{jog.formattedTime}}</p></td>
               </tr>
               <tr>
                 <td><span>Distance covered:</span></td>
@@ -44,8 +44,11 @@
           </table>
 
           <div class="card text-center">
-            <span>You were running at {{jog.location.location}} (lat: {{jog.location.latitude}}°, lon: {{jog.location.longitude}}°). 
+            <span *ngIf="jog.location">You were running at {{jog.location.location}} (lat: {{jog.location.latitude}}°, lon: {{jog.location.longitude}}°). 
               The weather was {{jog.location.description}} with temperature {{jog.location.temperature}} ℃ that feels like {{jog.location.feelsLikeTemperature}} ℃.
+            </span>
+            <span *ngIf="!jog.location">
+              Unfortunatley the weather service was unavailable at the time. No weather information available.
             </span>
           </div>
 

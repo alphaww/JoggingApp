@@ -12,7 +12,7 @@ import { JogService } from 'src/app/services/jog.service';
 export class JogsInsertComponent implements OnInit {
   jogInsertForm: FormGroup;
   coordinates: FormGroup;
-  ttime: FormGroup;
+  time: FormGroup;
   currentDate = new Date();
 
   constructor(private jogService: JogService, private toastr: ToastrService, private fb: FormBuilder, private router: Router) {
@@ -23,14 +23,14 @@ export class JogsInsertComponent implements OnInit {
         latitude: [''],
         longitude: ['']
       }),
-      ttime: this.fb.group({
-        hours: ['',  Validators.required, Validators.min(0), Validators.max(23)],
+      time: this.fb.group({
+        hours: ['',  Validators.required],
         minutes: ['',  Validators.required],
         seconds: ['',  Validators.required]
       })
     })
     this.coordinates = this.jogInsertForm.controls['coordinates'] as FormGroup
-    this.ttime = this.jogInsertForm.controls['ttime'] as FormGroup
+    this.time = this.jogInsertForm.controls['time'] as FormGroup
   }
 
   ngOnInit(): void {

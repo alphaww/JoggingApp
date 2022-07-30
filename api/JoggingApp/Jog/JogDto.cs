@@ -15,7 +15,7 @@ namespace JoggingApp.Jogs
             get
             {
                 var timeSpan = Time.ToTimeSpan();
-                return timeSpan.TotalHours / (Distance / 1000.0);
+                return (Distance / 1000.0) / timeSpan.TotalHours;
             }
         }
 
@@ -23,7 +23,7 @@ namespace JoggingApp.Jogs
         {
             get
             {
-                return Time.ToTimeSpan().ToString();
+                return $"{Time.Hours} hours, {Time.Minutes} minutes, {Time.Seconds} seconds";
             }
         }
 
