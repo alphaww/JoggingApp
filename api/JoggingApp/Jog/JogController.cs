@@ -52,9 +52,9 @@ namespace JoggingApp.Jogs
         public async Task<JogDto> GetAsync(Guid jogId, CancellationToken cancellation)
         {
             var jog = await _jogStorage.GetByUserIdJogIdAsync(User.GetId(), jogId, cancellation);
-            return new JogDto(jog);
+            return jog is not null ? new JogDto(jog) : null;
         }
-
+        
         [HttpPost]
         [Route("insert")]
         public async Task<IActionResult> InsertAsync(JogInsertRequest request, CancellationToken cancellation)
