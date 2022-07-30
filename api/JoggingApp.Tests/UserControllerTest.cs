@@ -28,7 +28,7 @@ namespace JoggingApp.Tests
                 Password = "1234"
             };
             // Act
-            var result = await _controller.Atuhenticate(request, CancellationToken.None);
+            var result = await _controller.LogInAsync(request, CancellationToken.None);
 
             // Assert
             Assert.IsType<UnauthorizedResult>(result);
@@ -46,7 +46,7 @@ namespace JoggingApp.Tests
                 Password = password
             };
 
-            await _controller.Register(registerRequest, CancellationToken.None);
+            await _controller.RegisterAsync(registerRequest, CancellationToken.None);
 
             var authRequest = new UserAuthRequest
             {
@@ -54,7 +54,7 @@ namespace JoggingApp.Tests
                 Password = password
             };
 
-            var result = await _controller.Atuhenticate(authRequest, CancellationToken.None);
+            var result = await _controller.LogInAsync(authRequest, CancellationToken.None);
 
             Assert.IsType<UnauthorizedResult>(result);
         }
@@ -72,7 +72,7 @@ namespace JoggingApp.Tests
                 Password = password
             };
 
-            await _controller.Register(registerRequest, CancellationToken.None);
+            await _controller.RegisterAsync(registerRequest, CancellationToken.None);
 
             var registeredUser = await _userStorage.FindByEmailAsync(email, CancellationToken.None);
 
@@ -80,7 +80,7 @@ namespace JoggingApp.Tests
 
             var activationToken = registeredUser.ActivationTokens.Single();
 
-            await _controller.Confirm(activationToken.Id, CancellationToken.None);
+            await _controller.ConfirmAsync(activationToken.Id, CancellationToken.None);
 
             var registeredUser2 = await _userStorage.FindByEmailAsync(email, CancellationToken.None);
 
@@ -90,7 +90,7 @@ namespace JoggingApp.Tests
                 Password = password
             };
 
-            var result = await _controller.Atuhenticate(authRequest, CancellationToken.None);
+            var result = await _controller.LogInAsync(authRequest, CancellationToken.None);
 
             Assert.IsType<OkObjectResult>(result);
         }
@@ -108,7 +108,7 @@ namespace JoggingApp.Tests
                 Password = password
             };
 
-            var result = await _controller.Register(registerRequest, CancellationToken.None);
+            var result = await _controller.RegisterAsync(registerRequest, CancellationToken.None);
 
             var registeredUser = await _userStorage.FindByEmailAsync(email, CancellationToken.None);
 
@@ -129,9 +129,9 @@ namespace JoggingApp.Tests
                 Password = "aaac"
             };
 
-            await _controller.Register(registerRequest, CancellationToken.None);
+            await _controller.RegisterAsync(registerRequest, CancellationToken.None);
 
-            var result = await _controller.Register(registerRequest, CancellationToken.None);
+            var result = await _controller.RegisterAsync(registerRequest, CancellationToken.None);
 
             Assert.IsType<ConflictObjectResult>(result);
         }
@@ -146,7 +146,7 @@ namespace JoggingApp.Tests
             };
 
             // Act
-            var result = await _controller.Register(registerRequest, CancellationToken.None);
+            var result = await _controller.RegisterAsync(registerRequest, CancellationToken.None);
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);

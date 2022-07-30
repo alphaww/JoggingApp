@@ -42,13 +42,13 @@ namespace JoggingApp.Users
             _hashService = hashService ?? throw new ArgumentNullException(nameof(hashService));
             _tokenWriter = tokenWriter ?? throw new ArgumentNullException(nameof(tokenWriter));
             _emailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
-            _userRegisteredEmailTemplateRenderer = userRegisteredEmailTemplateRenderer;
+            _userRegisteredEmailTemplateRenderer = userRegisteredEmailTemplateRenderer ?? throw new ArgumentNullException(nameof(userRegisteredEmailTemplateRenderer));
             _clock = clock ?? throw new ArgumentNullException(nameof(clock));
         }
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register(UserRegisterRequest request, CancellationToken cancellation)
+        public async Task<IActionResult> RegisterAsync(UserRegisterRequest request, CancellationToken cancellation)
         {
             var validationResult = await _userRegisterRequestValidator.ValidateAsync(request, cancellation);
             if (!validationResult.IsValid)
@@ -69,7 +69,7 @@ namespace JoggingApp.Users
 
         [HttpPost]
         [Route("log-in")]
-        public async Task<IActionResult> Atuhenticate(UserAuthRequest request, CancellationToken cancellation)
+        public async Task<IActionResult> LogInAsync(UserAuthRequest request, CancellationToken cancellation)
         {
             var validationResult = await _userAuthRequestValidator.ValidateAsync(request, cancellation);
             if (!validationResult.IsValid)
@@ -88,7 +88,7 @@ namespace JoggingApp.Users
 
         [HttpGet]
         [Route("{activationTokenId:guid}/confirm")]
-        public async Task<IActionResult> Confirm(Guid activationTokenId, CancellationToken cancellation)
+        public async Task<IActionResult> ConfirmAsync(Guid activationTokenId, CancellationToken cancellation)
         {
             var user = await _userStorage.FindByActivationTokenId(activationTokenId, cancellation);
             if (user is null)
