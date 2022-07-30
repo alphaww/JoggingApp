@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using JoggingApp.Core;
+using JoggingApp.Core.Clock;
 using JoggingApp.Core.Crypto;
 using JoggingApp.Core.Email;
 using JoggingApp.Core.Users;
@@ -23,6 +24,7 @@ namespace JoggingApp.Users
         private readonly IHashService _hashService;
         private readonly ITokenWriter _tokenWriter;
         private readonly IEmailSender _emailSender;
+        private readonly IClock _clock;
         private readonly UserRegisteredEmailTemplateRenderer _userRegisteredEmailTemplateRenderer;
         public UserController(
             IValidator<UserRegisterRequest> userRegisterRequestValidator,
@@ -31,6 +33,7 @@ namespace JoggingApp.Users
             IHashService hashService,
             ITokenWriter tokenWriter,
             IEmailSender emailSender,
+            IClock clock,
             UserRegisteredEmailTemplateRenderer userRegisteredEmailTemplateRenderer)
         {
             _userRegisterRequestValidator = userRegisterRequestValidator ?? throw new ArgumentNullException(nameof(userRegisterRequestValidator));
@@ -40,6 +43,7 @@ namespace JoggingApp.Users
             _tokenWriter = tokenWriter ?? throw new ArgumentNullException(nameof(tokenWriter));
             _emailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
             _userRegisteredEmailTemplateRenderer = userRegisteredEmailTemplateRenderer;
+            _clock = clock ?? throw new ArgumentNullException(nameof(clock));
         }
 
         [HttpPost]
@@ -56,7 +60,7 @@ namespace JoggingApp.Users
             {
                 return Conflict($"User with email {request.Email} already exists.");
             }
-            var (user, activationToken) = Core.Users.User.Create(request.Email, request.Password, _hashService);
+            var (user, activationToken) = Core.Users.User.Create(request.Email, request.Password, _hashService, _clock);
             await _userStorage.InsertAsync(user, cancellation);
             var emailTemplate = await _userRegisteredEmailTemplateRenderer.RenderForUserActivationToken(activationToken);
             await _emailSender.SendAsync(new MailMessage(request.Email, "Confirm account", emailTemplate));
@@ -91,7 +95,7 @@ namespace JoggingApp.Users
             {
                 return BadRequest($"Activation token does not exist. Please register and we will send you one to your email.");
             }
-            if (!user.HasValidActivationToken())
+            if (!user.HasValidActivationToken(_clock))
             {
                 return BadRequest($"Your activation token has expired.");
             }

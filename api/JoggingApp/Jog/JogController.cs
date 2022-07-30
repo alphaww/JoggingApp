@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using JoggingApp.Core.Clock;
 using JoggingApp.Core.Jogs;
 using JoggingApp.Core.Weather;
 using Microsoft.AspNetCore.Authorization;
@@ -22,29 +23,35 @@ namespace JoggingApp.Jogs
         private readonly IJogStorage _jogStorage;
         private readonly IWeatherService _weatherService;
         private readonly ILogger<JogController> _logger;
-        public JogController(IJogStorage jogStorage, IWeatherService weatherService, ILogger<JogController> logger,
-            IValidator<JogUpdateRequest> jogUpdateValidator, IValidator<JogInsertRequest> jogInsertValidator)
+        private readonly IClock _clock;
+        public JogController(IJogStorage jogStorage,
+            IWeatherService weatherService,
+            ILogger<JogController> logger,
+            IValidator<JogUpdateRequest> jogUpdateValidator, 
+            IValidator<JogInsertRequest> jogInsertValidator,
+            IClock clock)
         {
             _jogStorage = jogStorage ?? throw new ArgumentNullException(nameof(jogStorage));
             _weatherService = weatherService ?? throw new ArgumentNullException(nameof(weatherService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _jogUpdateValidator = jogUpdateValidator ?? throw new ArgumentNullException(nameof(jogUpdateValidator));
             _jogInsertValidator = jogInsertValidator ?? throw new ArgumentNullException(nameof(jogInsertValidator));
+            _clock = clock ?? throw new ArgumentNullException(nameof(clock));
         }
 
         [HttpGet]
         [Route("search")]
-        public async Task<IEnumerable<JogDto>> SearchAsync(DateTime? from, DateTime? to)
+        public async Task<IEnumerable<JogDto>> SearchAsync(DateTime? from, DateTime? to, CancellationToken cancellation)
         {
-            var jogs = await _jogStorage.SearchAsync(User.GetId(), from, to);
+            var jogs = await _jogStorage.SearchAsync(User.GetId(), from, to, cancellation);
             return jogs.Select(j => new JogDto(j));
         }
 
         [HttpGet]
         [Route("{jogId:guid}")]
-        public async Task<JogDto> GetAsync(Guid jogId)
+        public async Task<JogDto> GetAsync(Guid jogId, CancellationToken cancellation)
         {
-            var jog = await _jogStorage.GetByUserIdJogIdAsync(User.GetId(), jogId);
+            var jog = await _jogStorage.GetByUserIdJogIdAsync(User.GetId(), jogId, cancellation);
             return new JogDto(jog);
         }
 
@@ -57,12 +64,12 @@ namespace JoggingApp.Jogs
             {
                 return BadRequest(validationResult.ToDictionary());
             }
-            var jog = new Jog(User.GetId(), request.Distance, request.Time.ToTimeSpan());
+            var jog = Jog.Create(User.GetId(), request.Distance, request.Time.ToTimeSpan(), _clock);
             if (request.Coordinates is not null)
             {
                 try
                 {
-                    var curentWeatherInfo = await _weatherService.FetchWeatherInfo(request.Coordinates);
+                    var curentWeatherInfo = await _weatherService.FetchWeatherInfoAsync(request.Coordinates, cancellation);
                     jog.AddLocationDetail(request.Coordinates, curentWeatherInfo);
                 }
                 catch (Exception ex)
@@ -70,7 +77,7 @@ namespace JoggingApp.Jogs
                     _logger.LogWarning(ex.ToString());
                 }
             }
-            await _jogStorage.InsertAsync(jog);
+            await _jogStorage.InsertAsync(jog, cancellation);
             return Ok();
         }
 
@@ -83,7 +90,7 @@ namespace JoggingApp.Jogs
             {
                 return BadRequest(validationResult.ToDictionary());
             }
-            var jog = await _jogStorage.GetByJogId(jogId);
+            var jog = await _jogStorage.GetByJogIdAsync(jogId, cancellation);
             if (jog is null)
             {
                 return NotFound();
@@ -93,15 +100,15 @@ namespace JoggingApp.Jogs
                 return BadRequest($"Can't update jog record id:{jogId}. You can update only jog records that you own.");
             }
             jog.Update(request.Distance, request.Time.ToTimeSpan());
-            await _jogStorage.UpdateAsync(jog);
+            await _jogStorage.UpdateAsync(jog, cancellation);
             return Ok();
         }
 
         [HttpDelete]
         [Route("{jogId:guid}/delete")]
-        public async Task<IActionResult> DeleteAsync(Guid jogId)
+        public async Task<IActionResult> DeleteAsync(Guid jogId, CancellationToken cancellation)
         {
-            var jog = await _jogStorage.GetByJogId(jogId);
+            var jog = await _jogStorage.GetByJogIdAsync(jogId, cancellation);
             if (jog is null)
             {
                 return NotFound();
@@ -110,7 +117,7 @@ namespace JoggingApp.Jogs
             {
                 return BadRequest($"Can't delete jog record id:{jogId}. You can delete only jog records that you own.");
             }
-            await _jogStorage.DeleteAsync(jog);
+            await _jogStorage.DeleteAsync(jog, cancellation);
             return Ok();
         }
     }

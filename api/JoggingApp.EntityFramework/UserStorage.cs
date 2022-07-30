@@ -26,7 +26,7 @@ namespace JoggingApp.EntityFramework
         }
 
         public async Task<User> FindByEmailAsync(string email, CancellationToken cancellation)
-        {;
+        {
             return await _context.Users
                 .Include(user => user.ActivationTokens)
                 .SingleOrDefaultAsync(user => user.Email == email, cancellation);

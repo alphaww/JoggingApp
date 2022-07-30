@@ -8,7 +8,7 @@ namespace JoggingApp.Setup
     {
         public static void AddWeatherService(this IServiceCollection services)
         {
-            services.AddTransient<IWeatherService, OpenWeatherService>();
+            services.AddScoped<IWeatherService, OpenWeatherService>();
         }
     }
 }

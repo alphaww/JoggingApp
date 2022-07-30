@@ -5,7 +5,7 @@ namespace JoggingApp.Tests
     public class FakeWeatherService : IWeatherService
     {
         public bool WasCalled { get; private set; }
-        public Task<WeatherInfo> FetchWeatherInfo(Coordinates coordinates)
+        public Task<WeatherInfo> FetchWeatherInfoAsync(Coordinates coordinates, CancellationToken cancellation = default)
         {
             WasCalled = true;
             return Task.FromResult(new WeatherInfo

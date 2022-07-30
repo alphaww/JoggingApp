@@ -17,7 +17,6 @@ namespace JoggingApp.Services
         private readonly string _username;
         private readonly string _password;
         private readonly bool _enableSsl;
-        private readonly bool _useDefaultCredentials;
 
         public EmailSender(IConfiguration configuration)
         {
@@ -31,7 +30,6 @@ namespace JoggingApp.Services
             _password = configuration["Email:SmtpPassword"];
             _ = bool.TryParse(configuration["Email:EnableSsl"], out bool useSsl);
             _enableSsl = useSsl;
-            _useDefaultCredentials = bool.Parse(configuration["Email:UseDefaultCredentials"]);
         }
 
         private MimeMessage CreateMimeMessage(MailMessage message)

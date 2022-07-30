@@ -12,43 +12,44 @@ namespace JoggingApp.EntityFramework
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<IEnumerable<Jog>> SearchAsync(Guid userId, DateTime? from, DateTime? to)
+        public async Task<IEnumerable<Jog>> SearchAsync(Guid? userId, DateTime? from, DateTime? to, CancellationToken cancellation = default)
         {
             return await _context.Jogs
                 .Include(jog => jog.JogLocation)
                 .Where(jog => 
-            jog.UserId == userId && 
+            (!userId.HasValue || jog.UserId == userId)
+            && 
             (!from.HasValue || jog.Date >= from)
             && (!to.HasValue || jog.Date <= to))
                 .OrderByDescending(jog => jog.Date)
-                .ToListAsync();
+                .ToListAsync(cancellation);
         }
 
-        public async Task<Jog> GetByUserIdJogIdAsync(Guid userId, Guid jogId)
+        public async Task<Jog> GetByUserIdJogIdAsync(Guid userId, Guid jogId, CancellationToken cancellation = default)
         {
-            return await _context.Jogs.SingleOrDefaultAsync(jog => jog.UserId == userId && jog.Id == jogId);
+            return await _context.Jogs.SingleOrDefaultAsync(jog => jog.UserId == userId && jog.Id == jogId, cancellation);
         }
-        public async Task<Jog> GetByJogId(Guid jogId)
+        public async Task<Jog> GetByJogIdAsync(Guid jogId, CancellationToken cancellation = default)
         {
-            return await _context.Jogs.SingleOrDefaultAsync(jog => jog.Id == jogId);
+            return await _context.Jogs.SingleOrDefaultAsync(jog => jog.Id == jogId, cancellation);
         }
 
-        public async Task DeleteAsync(Jog jogToDelete)
+        public async Task DeleteAsync(Jog jogToDelete, CancellationToken cancellation = default)
         {
             _context.Jogs.Remove(jogToDelete);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellation);
         }
 
-        public async Task InsertAsync(Jog jogToInsert)
+        public async Task InsertAsync(Jog jogToInsert, CancellationToken cancellation = default)
         {
-            await _context.Jogs.AddAsync(jogToInsert);
-            await _context.SaveChangesAsync();
+            await _context.Jogs.AddAsync(jogToInsert, cancellation);
+            await _context.SaveChangesAsync(cancellation);
         }
 
-        public async Task UpdateAsync(Jog jogToUpdate)
+        public async Task UpdateAsync(Jog jogToUpdate, CancellationToken cancellation = default)
         {
             _context.Jogs.Update(jogToUpdate);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellation);
         }
     }
 }

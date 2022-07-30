@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JoggingApp.Services
@@ -16,12 +17,12 @@ namespace JoggingApp.Services
             _httpClient = httpClient;
             _configuration = configuration;
         }
-        public async Task<WeatherInfo> FetchWeatherInfo(Coordinates coordinates)
+        public async Task<WeatherInfo> FetchWeatherInfoAsync(Coordinates coordinates, CancellationToken cancellation = default)
         {
             var appId = _configuration["OpenWeather:AppId"];
             var url = _configuration["OpenWeather:Url"];
-            var response = await _httpClient.GetAsync($"{url}?lat={coordinates.Latitude}&AppId={appId}&lon={coordinates.Longitude}&units=metric");
-            var content = await response.Content.ReadAsStringAsync();
+            var response = await _httpClient.GetAsync($"{url}?lat={coordinates.Latitude}&AppId={appId}&lon={coordinates.Longitude}&units=metric", cancellation);
+            var content = await response.Content.ReadAsStringAsync(cancellation);
             var obj = JsonConvert.DeserializeObject<JObject>(content);
 
             return new WeatherInfo

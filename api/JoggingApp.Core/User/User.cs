@@ -1,14 +1,15 @@
-﻿using JoggingApp.Core.Crypto;
+﻿using JoggingApp.Core.Clock;
+using JoggingApp.Core.Crypto;
 
 namespace JoggingApp.Core.Users
 {
     public class User
     {
-        public static (User, UserActivationToken) Create(string email, string password, IHashService hashService)
+        public static (User, UserActivationToken) Create(string email, string password, IHashService hashService, IClock clock)
         {
             var user = new User(Guid.NewGuid(), email, hashService.Hash(password), UserState.Inactive);
             //Expiration time shouldd not be hardcoded. But will leave it as is for this demo purpose
-            var activationToken = new UserActivationToken(DateTime.UtcNow, DateTime.UtcNow.AddMinutes(2), user);
+            var activationToken = new UserActivationToken(clock.Now, clock.Now.AddMinutes(2), user);
             user.ActivationTokens.Add(activationToken);
             return (user, activationToken);
         }
@@ -37,9 +38,9 @@ namespace JoggingApp.Core.Users
             State = UserState.Active;
         }
 
-        public bool HasValidActivationToken()
+        public bool HasValidActivationToken(IClock clock)
         {
-            return ActivationTokens.Any(x => x.ValidFrom <= DateTime.UtcNow && x.ValidTo >= DateTime.UtcNow);
+            return ActivationTokens.Any(x => x.ValidFrom <= clock.Now && x.ValidTo >= clock.Now);
         }
 
     }

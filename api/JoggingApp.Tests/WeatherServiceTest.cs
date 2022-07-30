@@ -15,7 +15,7 @@ namespace JoggingApp.Tests
         [Fact]
         public async void WeatherService_Should_Return_Weather_Info_For_Zagreb()
         {
-            var weatherInfo = await _weatherService.FetchWeatherInfo(new Coordinates { Latitude = 45.815399, Longitude = 15.966568 });
+            var weatherInfo = await _weatherService.FetchWeatherInfoAsync(new Coordinates { Latitude = 45.815399, Longitude = 15.966568 });
             Assert.NotNull(weatherInfo);
         }
     }

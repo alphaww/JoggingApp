@@ -13,8 +13,8 @@ namespace JoggingApp.Setup
         public static void AddStorage(this WebApplicationBuilder builder)
         {
             builder.Services.AddDbContext<JoggingAppDbContext>(context => context.UseSqlServer(builder.Configuration["ConnectionString:DefaultConnection"]));
-            builder.Services.AddTransient<IUserStorage, UserStorage>();
-            builder.Services.AddTransient<IJogStorage, JogStorage>();
+            builder.Services.AddScoped<IUserStorage, UserStorage>();
+            builder.Services.AddScoped<IJogStorage, JogStorage>();
         }
     }
 }

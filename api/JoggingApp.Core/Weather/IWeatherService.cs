@@ -2,6 +2,6 @@
 {
     public interface IWeatherService
     {
-        Task<WeatherInfo> FetchWeatherInfo(Coordinates coordinates);
+        Task<WeatherInfo> FetchWeatherInfoAsync(Coordinates coordinates, CancellationToken cancellation = default);
     }
 }

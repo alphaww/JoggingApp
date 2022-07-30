@@ -1,15 +1,21 @@
-﻿using JoggingApp.Core.Users;
+﻿using JoggingApp.Core.Clock;
+using JoggingApp.Core.Users;
 using JoggingApp.Core.Weather;
 
 namespace JoggingApp.Core.Jogs
 {
     public class Jog
     {
-        public Jog(Guid userId, int distance, TimeSpan time)
+        public static Jog Create(Guid userId, int distance, TimeSpan time, IClock clock)
+        {
+            return new Jog(userId, distance, time, clock.Now);
+        }
+
+        private Jog(Guid userId, int distance, TimeSpan time, DateTime date)
         {
             Id = Guid.NewGuid();
             UserId = userId;
-            Date = DateTime.UtcNow;
+            Date = date;
             Distance = distance;
             Time = time;
         }

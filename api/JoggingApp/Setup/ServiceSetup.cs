@@ -1,4 +1,5 @@
 ﻿using JoggingApp.Core;
+using JoggingApp.Core.Clock;
 using JoggingApp.Core.Crypto;
 using JoggingApp.Core.Email;
 using JoggingApp.Core.Templating;
@@ -12,11 +13,12 @@ namespace JoggingApp.Setup
     {
         public static void AddServices(this IServiceCollection services)
         {
-            services.AddTransient<ITokenWriter, JwtSecurityTokenWriter>();
-            services.AddTransient<IHashService, MD5HashService>();
-            services.AddTransient<IEmailSender, EmailSender>();
-            services.AddTransient<ITemplateRenderer, RazorTemplateRenderer>();
-            services.AddTransient<UserRegisteredEmailTemplateRenderer>();
+            services.AddScoped<ITokenWriter, JwtSecurityTokenWriter>();
+            services.AddScoped<IHashService, MD5HashService>();
+            services.AddScoped<IEmailSender, EmailSender>();
+            services.AddScoped<ITemplateRenderer, RazorTemplateRenderer>();
+            services.AddScoped<IClock, SystemClock>();
+            services.AddScoped<UserRegisteredEmailTemplateRenderer>();         
         }
     }
 }
