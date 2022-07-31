@@ -63,8 +63,8 @@ namespace JoggingApp.Tests
              var hashService = sp.GetService<IHashService>();
              var clock = sp.GetService<IClock>();
 
-             var (user1, _) = User.Create("testuser1@test.com", "testuser1", hashService, clock);
-             var (user2, _) = User.Create("testuser2@test.com", "testuser2", hashService, clock);
+             var (user1, _) = User.Create("testuser1@test.com", "?Testuser123.1", hashService, clock);
+             var (user2, _) = User.Create("testuser2@test.com", "?Testuser123.2", hashService, clock);
 
              context.Users.Add(user1);
              context.Users.Add(user2);

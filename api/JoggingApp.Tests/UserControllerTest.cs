@@ -63,7 +63,7 @@ namespace JoggingApp.Tests
         public async void Authenticate_Should_Return_Ok_If_User_Is_Registered_And_Confirmed()
         {
             var email = "somedummy3@gmail.com";
-            var password = "ccxc";
+            var password = "?Pass123.3";
             var hashedPassword = _hashService.Hash(password);
 
             var registerRequest = new UserRegisterRequest
@@ -99,7 +99,7 @@ namespace JoggingApp.Tests
         public async void Register_Should_Create_A_Valid_New_Inactive_User_And_Return_Ok()
         {
             var email = "somedummy4@gmail.com";
-            var password = "zzoz";
+            var password = "?Pass123.4";
             var hashedPassword = _hashService.Hash(password);
 
             var registerRequest = new UserRegisterRequest
@@ -126,7 +126,7 @@ namespace JoggingApp.Tests
             var registerRequest = new UserRegisterRequest
             {
                 Email = "somedummy5@gmail.com",
-                Password = "aaac"
+                Password = "?Pass123.5"
             };
 
             await _controller.RegisterAsync(registerRequest, CancellationToken.None);
@@ -157,8 +157,8 @@ namespace JoggingApp.Tests
             // 1) email is not a valid email, 2) email is empty
             Assert.True(errors[nameof(UserRegisterRequest.Email)].Count() == 2);
 
-            // 1) password is empty
-            Assert.True(errors[nameof(UserRegisterRequest.Password)].Count() == 1);
+            // 1) password is empty and all the password strength rules
+            Assert.True(errors[nameof(UserRegisterRequest.Password)].Count() == 6);
         }
     }
 }
