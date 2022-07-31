@@ -48,6 +48,7 @@ namespace JoggingApp.EntityFramework
 
         public async Task UpdateAsync(Jog jogToUpdate, CancellationToken cancellation = default)
         {
+            _context.ChangeTracker.Clear();
             _context.Jogs.Update(jogToUpdate);
             await _context.SaveChangesAsync(cancellation);
         }

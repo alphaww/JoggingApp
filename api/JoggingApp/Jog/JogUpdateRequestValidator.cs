@@ -8,8 +8,8 @@ namespace JoggingApp.Jogs
         {
             RuleFor(x => x.Distance)
                 .NotEmpty()
-                .Must(x => x > 0 && x <= 150000)
-                .WithMessage("Distance must be integer in range [1 - 150000] meters");
+                .Must(x => x > 0 && x <= 500000)
+                .WithMessage("Distance must be integer in range [1 - 500000] meters");
 
             RuleFor(x => x.Time)
                 .NotEmpty()

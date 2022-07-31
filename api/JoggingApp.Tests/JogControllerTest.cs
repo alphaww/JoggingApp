@@ -3,7 +3,6 @@ using JoggingApp.Core.Jogs;
 using JoggingApp.Core.Users;
 using JoggingApp.Core.Weather;
 using JoggingApp.Jogs;
-using JoggingApp.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -30,7 +29,7 @@ namespace JoggingApp.Tests
         }
 
         private void SetUpPrincipal(User user)
-        { 
+        {
             var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] {
                                           new Claim(ClaimTypes.Email, user.Email),
                                           new Claim("id", user.Id.ToString())
@@ -101,9 +100,9 @@ namespace JoggingApp.Tests
                 Distance = -5,
                 Time = new RunningTimeDto
                 {
-                 Hours = -1,
-                 Minutes = -1,
-                 Seconds = -1
+                    Hours = -1,
+                    Minutes = -1,
+                    Seconds = -1
                 }
             };
 
@@ -190,6 +189,111 @@ namespace JoggingApp.Tests
             Assert.True(insertedJog is not null);
             Assert.True(insertedJog.JogLocation is not null);
             Assert.True(insertedJog.UserId == user2.Id);
+        }
+
+        [Fact]
+        public async void UpdateAsync_Should_Return_BadRequest_And_Validation_Errors_If_Request_Invalid()
+        {
+            var updateJogRequest = new JogUpdateRequest
+            {
+                Distance = -5,
+                Time = new RunningTimeDto
+                {
+                    Hours = -1,
+                    Minutes = -1,
+                    Seconds = -1
+                }
+            };
+
+            var jogToUpdate = (await _jogStorage.SearchAsync(null, null, null)).First();
+
+            var result = await _controller.UpdateAsync(jogToUpdate.Id, updateJogRequest, CancellationToken.None);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+
+            var badRequestResult = result as BadRequestObjectResult;
+            var errors = badRequestResult.Value as Dictionary<string, string[]>;
+
+            // 1) time must be in proper range
+            Assert.True(errors[nameof(JogUpdateRequest.Time)].Count() == 1);
+
+            // 2) distance must be in proper range
+            Assert.True(errors[nameof(JogUpdateRequest.Distance)].Count() == 1);
+        }
+
+        [Fact]
+        public async void UpdateAsync_Should_Return_NotFound_If_Updating_Non_Existing_Jog()
+        {
+            var updateJogRequest = new JogUpdateRequest
+            {
+                Distance = 10000,
+                Time = new RunningTimeDto
+                {
+                    Hours = 2,
+                    Minutes = 0,
+                    Seconds = 0
+                }
+            };
+
+            var result = await _controller.UpdateAsync(Guid.NewGuid(), updateJogRequest, CancellationToken.None);
+
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async void UpdateAsync_Should_Return_BadRequest_If_Updating_Jog_That_You_Dont_Own()
+        {
+            var user1 = await _userStorage.FindByEmailAsync(user1Email, CancellationToken.None);
+            var user2 = await _userStorage.FindByEmailAsync(user2Email, CancellationToken.None);
+            SetUpPrincipal(user2);
+
+            var updateJogRequest = new JogUpdateRequest
+            {
+                Distance = 10000,
+                Time = new RunningTimeDto
+                {
+                    Hours = 2,
+                    Minutes = 0,
+                    Seconds = 0
+                }
+            };
+
+            var jogToUpdate = (await _jogStorage.SearchAsync(user1.Id, null, null)).First();
+
+            var result = await _controller.UpdateAsync(jogToUpdate.Id, updateJogRequest, CancellationToken.None);
+
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        public async void UpdateAsync_Should_Return_Ok_And_Do_Correct_Update_If_Updating_Jog_That_You_Own()
+        {
+            var user1 = await _userStorage.FindByEmailAsync(user1Email, CancellationToken.None);
+            SetUpPrincipal(user1);
+
+            var updateJogRequest = new JogUpdateRequest
+            {
+                Distance = 99002,
+                Time = new RunningTimeDto
+                {
+                    Hours = 12,
+                    Minutes = 24,
+                    Seconds = 33
+                }
+            };
+
+            var jogToUpdate = (await _jogStorage.SearchAsync(user1.Id, null, null)).First();
+
+            var result = await _controller.UpdateAsync(jogToUpdate.Id, updateJogRequest, CancellationToken.None);
+
+            var updatedJog = await _jogStorage.GetByJogIdAsync(jogToUpdate.Id);
+
+            Assert.IsType<OkResult>(result);
+            Assert.True(updatedJog.Distance == updateJogRequest.Distance);
+            Assert.True(updatedJog.Time == updateJogRequest.Time.ToTimeSpan());
+            Assert.True(updatedJog.Id == jogToUpdate.Id);
+
         }
     }
 }
