@@ -1,5 +1,5 @@
 # JoggingApp
-Jogging ap with asp.net 6 core + angular 14
+Jogging ap with asp.net 6 core + angular 
 
 1) Clone the repository
 
@@ -18,3 +18,4 @@ Jogging ap with asp.net 6 core + angular 14
     3) In CLI run: npm run start
     4) browse localhost:4200
 
+See tests project in the backend project for documentation related to business rules and functionality
