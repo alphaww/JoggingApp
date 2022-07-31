@@ -3,7 +3,7 @@ Jogging ap with asp.net 6 core + angular
 
 1) Clone the repository
 
-   a) How to run backend for full e2e functionality
+   a) How to run backend for full e2e
     
      1) Make sure you are running a local instance of SQL server, the newer the better
      2) Configure ConnectionString section in the appsettings.Development.json in the JoggingApp ( api ) project to point to that db inscance
@@ -13,6 +13,7 @@ Jogging ap with asp.net 6 core + angular
      6) Open the .sln file with your favorite IDE and hit the play button
      
    b) How to run frontend
+   
     1) Install node, npm
     2) Position yourself into spa folder
     3) In CLI run: npm install
