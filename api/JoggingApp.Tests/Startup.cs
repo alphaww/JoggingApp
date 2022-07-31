@@ -21,7 +21,7 @@ namespace JoggingApp.Tests
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient(x => BuildConfig());
+            services.AddScoped(x => BuildConfig());
 
             services.AddHttpClient();
             services.AddScoped(x => BuildDbContextWithTestData(x));
@@ -30,7 +30,7 @@ namespace JoggingApp.Tests
             services.AddScoped<IEmailSender, FakeEmailSender>();
             services.AddScoped<IWeatherService, FakeWeatherService>();
             services.AddScoped<ITemplateRenderer, FakeTemplateRenderer>();
-            services.AddTransient<IClock>(x => new FakeClock(DateTime.UtcNow));
+            services.AddScoped<IClock>(x => new FakeClock(DateTime.UtcNow));
             services.AddScoped<IUserStorage, UserStorage>();
             services.AddScoped<IJogStorage, JogStorage>();
 

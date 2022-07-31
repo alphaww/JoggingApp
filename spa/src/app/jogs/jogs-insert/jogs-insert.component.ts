@@ -17,15 +17,15 @@ export class JogsInsertComponent implements OnInit {
 
   constructor(private jogService: JogService, private toastr: ToastrService, private fb: FormBuilder, private router: Router) {
     this.jogInsertForm = this.fb.group({
-      distance: ['', Validators.required],
+      distance: ['', [Validators.required, Validators.min(0), Validators.max(500000)]],
       coordinates: this.fb.group({
-        latitude: [''],
-        longitude: ['']
+        latitude: ['', [Validators.min(-90), Validators.max(90)]],
+        longitude: ['', [Validators.min(-180), Validators.max(180)]]
       }),
       time: this.fb.group({
-        hours: ['',  Validators.required],
-        minutes: ['',  Validators.required],
-        seconds: ['',  Validators.required]
+        hours: ['', [Validators.required, Validators.min(0), Validators.max(23)]],
+        minutes: ['', [Validators.required, Validators.min(0), Validators.max(59)]],
+        seconds: ['', [Validators.required, Validators.min(0), Validators.max(59)]]
       })
     })
     this.coordinates = this.jogInsertForm.controls['coordinates'] as FormGroup

@@ -21,11 +21,11 @@ export class JogsUpdateComponent implements OnInit {
     this.jogUpdateForm = this.fb.group({
       id: [''],
       date: [''],
-      distance: ['', [Validators.required, Validators.min(0), Validators.max(150000)]],
+      distance: ['', [Validators.required, Validators.min(0), Validators.max(500000)]],
       time: this.fb.group({
-        hours: ['',  Validators.required],
-        minutes: ['',  Validators.required],
-        seconds: ['',  Validators.required]
+        hours: ['', [Validators.required, Validators.min(0), Validators.max(23)]],
+        minutes: ['', [Validators.required, Validators.min(0), Validators.max(59)]],
+        seconds: ['', [Validators.required, Validators.min(0), Validators.max(59)]]
       })
     })
     this.time = this.jogUpdateForm.controls['time'] as FormGroup
