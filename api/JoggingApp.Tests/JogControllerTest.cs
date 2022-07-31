@@ -44,7 +44,7 @@ namespace JoggingApp.Tests
             new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 1, 1),  1},
             new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 2, 20), 2},
             new object[] { new DateTime(2022, 1, 1), new DateTime(2022, 3, 20), 3},
-            new object[] { null, null, 4},
+            new object[] { null, null, 4}
         };
 
         [Theory, MemberData(nameof(SearchJogsTestParams))]

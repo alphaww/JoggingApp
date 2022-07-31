@@ -39,7 +39,7 @@ export class ErrorInterceptor implements HttpInterceptor {
               break;
             case 401:
               this.toastr.error(error.statusText, error.status);
-              this.router.navigateByUrl('/');
+              this.router.navigateByUrl('/')
               break;
             case 404:
               this.toastr.error(error.error, error.status);
