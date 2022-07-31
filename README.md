@@ -3,6 +3,8 @@ Jogging ap with asp.net 6 core + angular
 
 1) Clone the repository
 
+3) Install dependencies and run the app
+
    a) How to run backend for full e2e
     
      1) Make sure you are running a local instance of SQL server, the newer the better
