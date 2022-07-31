@@ -8,6 +8,12 @@ namespace JoggingApp.Tests
         public Task<WeatherInfo> FetchWeatherInfoAsync(Coordinates coordinates, CancellationToken cancellation = default)
         {
             WasCalled = true;
+            if (coordinates is null 
+                || (coordinates.Latitude == 0)
+                || (coordinates.Longitude == 0))
+            {
+                throw new Exception("Unable to fetch weather info.");
+            }
             return Task.FromResult(new WeatherInfo
             {
                 Description = "test",
