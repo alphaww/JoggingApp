@@ -22,4 +22,4 @@ Jogging ap with asp.net 6 core + angular
     4) In CLI run: npm run start
     5) browse localhost:4200
 
-See tests project in the backend project for documentation related to business rules and functionality
+See tests project in the backend solution for documentation related to business rules and functionality
