@@ -295,5 +295,44 @@ namespace JoggingApp.Tests
             Assert.True(updatedJog.Id == jogToUpdate.Id);
 
         }
+
+        [Fact]
+        public async void DeleteAsync_Should_Return_NotFound_If_Deleting_Non_Existing_Jog()
+        {
+            var result = await _controller.DeleteAsync(Guid.NewGuid(), CancellationToken.None);
+
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async void DeleteAsync_Should_Return_BadRequest_If_Deleting_Jog_That_You_Dont_Own()
+        {
+            var user1 = await _userStorage.FindByEmailAsync(user1Email, CancellationToken.None);
+            var user2 = await _userStorage.FindByEmailAsync(user2Email, CancellationToken.None);
+            SetUpPrincipal(user2);
+
+            var jogToUpdate = (await _jogStorage.SearchAsync(user1.Id, null, null)).First();
+
+            var result = await _controller.DeleteAsync(jogToUpdate.Id, CancellationToken.None);
+
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        public async void DeleteAsync_Should_Return_Ok_And_Do_Correct_Delete_If_Deleting_Jog_That_You_Own()
+        {
+            var user1 = await _userStorage.FindByEmailAsync(user1Email, CancellationToken.None);
+            SetUpPrincipal(user1);
+
+            var jogToDelete = (await _jogStorage.SearchAsync(user1.Id, null, null)).First();
+
+            var result = await _controller.DeleteAsync(jogToDelete.Id, CancellationToken.None);
+
+            var deletedJog = await _jogStorage.GetByJogIdAsync(jogToDelete.Id);
+
+            Assert.IsType<OkResult>(result);
+            Assert.True(deletedJog is null);
+
+        }
     }
 }

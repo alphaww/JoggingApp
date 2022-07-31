@@ -36,6 +36,7 @@ namespace JoggingApp.EntityFramework
 
         public async Task DeleteAsync(Jog jogToDelete, CancellationToken cancellation = default)
         {
+            _context.ChangeTracker.Clear();
             _context.Jogs.Remove(jogToDelete);
             await _context.SaveChangesAsync(cancellation);
         }
