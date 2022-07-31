@@ -26,6 +26,7 @@ if (app.Environment.IsDevelopment())
     app.UseCustomSwaggerConfig();
 }
 
+//This is not good security. This is for demo purposes since this is a poc.
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.UseAuthentication();
@@ -33,4 +34,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MigrateDatabase();
+
 app.Run();
+
+
