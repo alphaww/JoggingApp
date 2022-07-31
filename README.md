@@ -13,9 +13,10 @@ Jogging ap with asp.net 6 core + angular
      6) Open the .sln file with your favorite IDE and hit the play button
      
    b) How to run frontend
-    1) Position yourself into spa folder
-    2) In CLI run: npm install
-    3) In CLI run: npm run start
-    4) browse localhost:4200
+    1) Install node, npm
+    2) Position yourself into spa folder
+    3) In CLI run: npm install
+    4) In CLI run: npm run start
+    5) browse localhost:4200
 
 See tests project in the backend project for documentation related to business rules and functionality
