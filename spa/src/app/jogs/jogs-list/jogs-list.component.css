@@ -13,3 +13,7 @@
 .jog-card-button-group {
     margin-top: 15px;
 }
+
+.jog-card-button-group div > a {
+    width: 20%;
+}

@@ -16,10 +16,10 @@ export class JogService {
  
     let queryParams = new HttpParams();
     if (dateTo) {
-      queryParams = queryParams.append("to",dateTo.toISOString());
+      queryParams = queryParams.append("to",dateTo.toDateString());
     } 
     if (dateFrom) {
-      queryParams = queryParams.append("from",dateFrom.toISOString());
+      queryParams = queryParams.append("from",dateFrom.toDateString());
     }
 
     return this.http.get<Jog[]>(url,{params:queryParams});

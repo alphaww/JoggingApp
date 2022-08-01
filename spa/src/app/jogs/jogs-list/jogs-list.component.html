@@ -52,10 +52,10 @@
             </span>
           </div>
 
-          <div  class="container jog-card-button-group">
-            <div class="col-md-12 text-center">
+          <div  class="jog-card-button-group">
+            <div class="col-12 text-center">
                 <a routerLink='update/{{jog.id}}' class="btn btn-primary">Edit</a>
-                <button type="button" class="btn btn-warning" (click)="delete(jog)">Delete</button>
+                <a type="button" class="btn btn-warning" (click)="delete(jog)">Delete</a>
             </div>
         </div>
     </div>

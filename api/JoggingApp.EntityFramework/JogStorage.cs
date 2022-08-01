@@ -19,8 +19,8 @@ namespace JoggingApp.EntityFramework
                 .Where(jog => 
             (!userId.HasValue || jog.UserId == userId)
             && 
-            (!from.HasValue || jog.Date >= from)
-            && (!to.HasValue || jog.Date <= to))
+            (!from.HasValue || jog.Date >= from.Value.Date)
+            && (!to.HasValue || jog.Date <= to.Value.Date))
                 .OrderByDescending(jog => jog.Date)
                 .ToListAsync(cancellation);
         }

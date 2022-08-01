@@ -8,7 +8,7 @@ namespace JoggingApp.Core.Jogs
     {
         public static Jog Create(Guid userId, int distance, TimeSpan time, IClock clock)
         {
-            return new Jog(userId, distance, time, clock.Now);
+            return new Jog(userId, distance, time, clock.Now.Date);
         }
 
         private Jog(Guid userId, int distance, TimeSpan time, DateTime date)
