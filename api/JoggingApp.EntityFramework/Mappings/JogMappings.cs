@@ -16,7 +16,7 @@ namespace JoggingApp.EntityFramework.Mappings
             builder.Property(x => x.Distance).IsRequired(true);
             builder.Property(x => x.Time).IsRequired(true);
 
-            builder.HasIndex(x => x.Date).IsUnique(false);
+            builder.HasIndex(x => x.Date).IncludeProperties(x => new { x.Id, x.Distance, x.Time, x.UserId }).IsUnique(false);
 
             builder.HasOne(x => x.User);
 
