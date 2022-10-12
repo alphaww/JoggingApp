@@ -1,4 +1,5 @@
 ﻿using JoggingApp.BackgroundJobs;
+using JoggingApp.Core.Outbox;
 using JoggingApp.OutboxPublishingAgent;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +11,7 @@ namespace JoggingApp.Setup
     {
         public static void AddOutboxProcessingEngine(this WebApplicationBuilder app)
         {
-            app.Services.AddScoped<OutboxStorage>();
+            app.Services.AddScoped<IOutboxStorage, DapperOutboxStorage>();
 
             app.Services.AddQuartz(configure =>
             {

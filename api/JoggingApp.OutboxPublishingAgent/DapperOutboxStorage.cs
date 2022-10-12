@@ -5,12 +5,12 @@ using Microsoft.Extensions.Configuration;
 
 namespace JoggingApp.OutboxPublishingAgent
 {
-    public class OutboxStorage
+    public class DapperOutboxStorage : IOutboxStorage
     {
         private readonly IConfiguration _configuration;
         private readonly string _connectionString;
 
-        public OutboxStorage(IConfiguration configuration)
+        public DapperOutboxStorage(IConfiguration configuration)
         {
             _configuration = configuration;
             _connectionString = _configuration["ConnectionString:DefaultConnection"];

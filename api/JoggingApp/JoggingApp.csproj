@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Setup\JwtAuthenticationSetup.cs~RF119f8d0.TMP" />
+    <None Remove="DependencyModules\JwtAuthenticationSetup.cs~RF119f8d0.TMP" />
   </ItemGroup>
 
   <ItemGroup>

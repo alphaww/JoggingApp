@@ -18,16 +18,16 @@ namespace JoggingApp.BackgroundJobs
         };
 
         private readonly IPublisher _publisher;
-        private readonly OutboxStorage _outboxStorage;
-        public BackgroundPublishingService(IPublisher publisher, OutboxStorage outboxStorage)
+        private readonly IOutboxStorage _dapperOutboxStorage;
+        public BackgroundPublishingService(IPublisher publisher, IOutboxStorage dapperOutboxStorage)
         {
             _publisher = publisher;
-            _outboxStorage = outboxStorage;
+            _dapperOutboxStorage = dapperOutboxStorage;
         }
 
         public async Task Execute(IJobExecutionContext context)
         {
-            var messages = await _outboxStorage.GetOutboxEvents();
+            var messages = await _dapperOutboxStorage.GetOutboxEvents();
 
             foreach (OutboxMessage outboxMessage in messages)
             {
@@ -54,11 +54,11 @@ namespace JoggingApp.BackgroundJobs
 
                 if (result.Outcome == OutcomeType.Failure)
                 {
-                    await _outboxStorage.UpdateOutboxEventStateToFailed(outboxMessage.Id, result.FinalException?.ToString());
+                    await _dapperOutboxStorage.UpdateOutboxEventStateToFailed(outboxMessage.Id, result.FinalException?.ToString());
                 }
                 else
                 {
-                    await _outboxStorage.UpdateOutboxEventStateToProcessed(outboxMessage.Id);
+                    await _dapperOutboxStorage.UpdateOutboxEventStateToProcessed(outboxMessage.Id);
                 }
             }
         }
