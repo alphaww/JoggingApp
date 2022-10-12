@@ -1,26 +1,29 @@
 ﻿using JoggingApp.Core.Clock;
+using JoggingApp.Core.Jog.DomainEvents;
 using JoggingApp.Core.Users;
 using JoggingApp.Core.Weather;
 
 namespace JoggingApp.Core.Jogs
 {
-    public class Jog
+    public class Jog : Entity
     {
         public static Jog Create(Guid userId, int distance, TimeSpan time, IClock clock)
         {
             return new Jog(userId, distance, time, clock.Now.Date);
         }
 
-        private Jog(Guid userId, int distance, TimeSpan time, DateTime date)
+        private Jog(Guid userId, int distance, TimeSpan time, DateTime date) : base(Guid.NewGuid())
         {
-            Id = Guid.NewGuid();
             UserId = userId;
             Date = date;
             Distance = distance;
             Time = time;
         }
 
-        public Guid Id { get; private set; }
+        private Jog()
+        {
+        }
+
         public DateTime Date { get; private set; }
         public int Distance { get; private set; }
         public TimeSpan Time { get; private set; }
@@ -40,6 +43,8 @@ namespace JoggingApp.Core.Jogs
             JogLocation = new JogLocation(this, coordinates.Latitude,
                 coordinates.Longitude, weatherInfo.Location, weatherInfo.Description,
                 weatherInfo.Temperature, weatherInfo.FeelsLikeTemperature);
+
+            RaiseDomainEvent(new JogLocationSetDomainEvent(Id, coordinates));
         }
     }
 }

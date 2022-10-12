@@ -2,7 +2,7 @@
 
 namespace JoggingApp.Core.Outbox
 {
-    public sealed class OutboxMessage
+    public class OutboxMessage
     {
         private OutboxMessage()
         {
