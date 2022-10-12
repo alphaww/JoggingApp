@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddStorage();
+builder.AddOutboxProcessingEngine();
 builder.Services.AddWeatherService();
 builder.Services.AddHttpClient();
 builder.Services.AddServices();
