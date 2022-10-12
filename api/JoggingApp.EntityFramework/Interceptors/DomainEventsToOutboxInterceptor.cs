@@ -7,10 +7,8 @@ namespace JoggingApp.EntityFramework.Interceptors
 {
     public class DomainEventsToOutboxInterceptor : SaveChangesInterceptor
     {
-        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
-            DbContextEventData eventData,
-            InterceptionResult<int> result,
-            CancellationToken cancellationToken = default)
+        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
+            InterceptionResult<int> result, CancellationToken cancellationToken = default)
         {
             var dbContext = eventData.Context;
 
@@ -22,11 +20,11 @@ namespace JoggingApp.EntityFramework.Interceptors
             var outboxMessages = dbContext.ChangeTracker
                 .Entries<Entity>()
                 .Select(x => x.Entity)
-                .SelectMany(aggregateRoot =>
+                .SelectMany(entity =>
                 {
-                    var domainEvents = aggregateRoot.GetDomainEvents();
+                    var domainEvents = entity.GetDomainEvents();
 
-                    aggregateRoot.ClearDomainEvents();
+                    entity.ClearDomainEvents();
 
                     return domainEvents;
                 })

@@ -1,5 +1,5 @@
-﻿using JoggingApp.Core.Jogs;
-using System;
+﻿using System;
+using JoggingApp.Core.Jogs;
 
 namespace JoggingApp.Jogs
 {
