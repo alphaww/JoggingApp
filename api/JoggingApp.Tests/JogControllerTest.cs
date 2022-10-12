@@ -159,39 +159,6 @@ namespace JoggingApp.Tests
         }
 
         [Fact]
-        public async void InsertAsync_Should_Return_Ok_And_Insert_New_Jog_For_User2_With_WeatherInfo_If_WeatherService_Succeeds()
-        {
-            var user2 = await _userStorage.FindByEmailAsync(user2Email, CancellationToken.None);
-            SetUpPrincipal(user2);
-
-            var insertJogRequest = new JogInsertRequest
-            {
-                Coordinates = new Coordinates
-                {
-                    Latitude = 45.815399,
-                    Longitude = 15.966568
-                },
-                Distance = 1000,
-                Time = new RunningTimeDto
-                {
-                    Hours = 3,
-                    Minutes = 0,
-                    Seconds = 0
-                }
-            };
-
-            var result = await _controller.InsertAsync(insertJogRequest, CancellationToken.None);
-
-            //SearchAsync should return all the jog entries in the DB and order it descending.
-            var insertedJog = (await _jogStorage.SearchAsync(null, null, null)).OrderByDescending(x => x.Date).Take(1).SingleOrDefault();
-
-            Assert.IsType<OkResult>(result);
-            Assert.True(insertedJog is not null);
-            Assert.True(insertedJog.JogLocation is not null);
-            Assert.True(insertedJog.UserId == user2.Id);
-        }
-
-        [Fact]
         public async void UpdateAsync_Should_Return_BadRequest_And_Validation_Errors_If_Request_Invalid()
         {
             var updateJogRequest = new JogUpdateRequest
