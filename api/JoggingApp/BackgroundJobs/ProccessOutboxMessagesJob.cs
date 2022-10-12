@@ -64,6 +64,7 @@ namespace JoggingApp.BackgroundJobs
                         context.CancellationToken));
 
                 outboxMessage.SetProcessed(result.FinalException?.ToString());
+                _dbContext.Entry(outboxMessage).State = EntityState.Modified;
             }
 
             await _dbContext.SaveChangesAsync();

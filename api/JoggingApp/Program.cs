@@ -1,10 +1,13 @@
+using JoggingApp;
 using JoggingApp.Setup;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddMediatR(AssemblyReference.Assembly);
 builder.AddStorage();
 builder.AddOutboxProcessingEngine();
 builder.Services.AddWeatherService();
