@@ -2,7 +2,7 @@
 {
     public interface IOutboxStorage
     {
-        Task<IEnumerable<OutboxMessage>> GetOutboxEvents();
+        Task<IEnumerable<OutboxMessage>> GetUnprocessedOutboxEvents();
 
         Task UpdateOutboxEventStateToProcessed(Guid Id);
 

@@ -27,14 +27,11 @@ namespace JoggingApp.BackgroundJobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            var messages = await _dapperOutboxStorage.GetOutboxEvents();
+            var messages = await _dapperOutboxStorage.GetUnprocessedOutboxEvents();
 
             foreach (OutboxMessage outboxMessage in messages)
             {
-                IDomainEvent domainEvent = JsonConvert
-                    .DeserializeObject<IDomainEvent>(
-                        outboxMessage.Content,
-                        JsonSerializerSettings);
+                IDomainEvent domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(outboxMessage.Content, JsonSerializerSettings);
 
                 if (domainEvent is null)
                 {
@@ -52,6 +49,7 @@ namespace JoggingApp.BackgroundJobs
                         domainEvent,
                         context.CancellationToken));
 
+                //TODO: Update all in one transaction in ACID way
                 if (result.Outcome == OutcomeType.Failure)
                 {
                     await _dapperOutboxStorage.UpdateOutboxEventStateToFailed(outboxMessage.Id, result.FinalException?.ToString());
