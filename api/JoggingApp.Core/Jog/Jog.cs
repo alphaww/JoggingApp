@@ -39,17 +39,18 @@ namespace JoggingApp.Core.Jogs
             Time = time;
         }       
 
-        public void SetLocationDetail(Coordinates coordinates)
+        public void RaiseLocationDetailSetEvent(Coordinates coordinates)
         {
             if (coordinates is null)
-            {
                 return;
-            }
-            //JogLocation = new JogLocation(this, coordinates.Latitude,
-            //    coordinates.Longitude, weatherInfo.Location, weatherInfo.Description,
-            //    weatherInfo.Temperature, weatherInfo.FeelsLikeTemperature);
 
             RaiseDomainEvent(new JogLocationSetDomainEvent(Id, coordinates));
+        }
+
+        public void SetLocationDetail(Coordinates coordinates, WeatherInfo weatherInfo)
+        {
+            JogLocation = new JogLocation(this, coordinates.Latitude,coordinates.Longitude, weatherInfo.Location, weatherInfo.Description,
+                weatherInfo.Temperature, weatherInfo.FeelsLikeTemperature);
         }
     }
 }
