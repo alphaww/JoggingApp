@@ -1,4 +1,5 @@
 ﻿using JoggingApp.Core.Jogs;
+using JoggingApp.Core.Outbox;
 using JoggingApp.Core.Users;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,7 @@ namespace JoggingApp.EntityFramework
         public DbSet<User> Users { get; set; }
         public DbSet<UserActivationToken> UserActivationTokens { get; set; }
         public DbSet<Jog> Jogs { get; set; }
+        public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
