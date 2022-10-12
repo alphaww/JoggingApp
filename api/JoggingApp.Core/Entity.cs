@@ -28,8 +28,4 @@ namespace JoggingApp.Core
     {
     }
 
-    public interface IDomainEventHandler<TEvent> : INotificationHandler<TEvent>
-        where TEvent : IDomainEvent
-    {
-    }
 }
