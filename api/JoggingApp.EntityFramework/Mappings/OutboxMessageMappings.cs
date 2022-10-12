@@ -14,6 +14,7 @@ namespace JoggingApp.EntityFramework.Mappings
             builder.Property(x => x.Type).IsRequired();
             builder.Property(x => x.Content).IsRequired();
             builder.Property(x => x.OccurredOnUtc).IsRequired();
+            builder.Property(x => x.EventState).IsRequired();
             builder.Property(x => x.ProcessedOnUtc);
             builder.Property(x => x.Error);
         }

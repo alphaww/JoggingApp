@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoggingApp.EntityFramework"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoggingApp.Tests", "JoggingApp.Tests\JoggingApp.Tests.csproj", "{34267A2A-88BC-40C4-ACD8-ECA17F1540AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoggingApp.OutboxPublishingAgent", "JoggingApp.OutboxPublishingAgent\JoggingApp.OutboxPublishingAgent.csproj", "{ADDCAF14-BDC3-47FE-9354-B5D69D18609F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{34267A2A-88BC-40C4-ACD8-ECA17F1540AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34267A2A-88BC-40C4-ACD8-ECA17F1540AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34267A2A-88BC-40C4-ACD8-ECA17F1540AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADDCAF14-BDC3-47FE-9354-B5D69D18609F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADDCAF14-BDC3-47FE-9354-B5D69D18609F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADDCAF14-BDC3-47FE-9354-B5D69D18609F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADDCAF14-BDC3-47FE-9354-B5D69D18609F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
