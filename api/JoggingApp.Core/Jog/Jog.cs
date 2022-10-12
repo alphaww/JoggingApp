@@ -39,7 +39,7 @@ namespace JoggingApp.Core.Jogs
             Time = time;
         }       
 
-        public void RaiseLocationDetailSetEvent(Coordinates coordinates)
+        public void RaiseLocationDetailSetEventIfCoordinatesProvided(Coordinates coordinates)
         {
             if (coordinates is null)
                 return;

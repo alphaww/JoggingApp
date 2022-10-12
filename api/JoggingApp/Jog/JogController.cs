@@ -65,7 +65,7 @@ namespace JoggingApp.Jogs
                 return BadRequest(validationResult.ToDictionary());
             }
             var jog = Jog.Create(User.GetId(), request.Distance, request.Time.ToTimeSpan(), _clock);
-            jog.RaiseLocationDetailSetEvent(request.Coordinates);
+            jog.RaiseLocationDetailSetEventIfCoordinatesProvided(request.Coordinates);
 
             await _jogStorage.InsertAsync(jog, cancellation);
             return Ok();
