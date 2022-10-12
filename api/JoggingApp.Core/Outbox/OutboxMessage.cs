@@ -25,7 +25,7 @@ namespace JoggingApp.Core.Outbox
 
         public string Content { get; }
 
-        public OutboxMessageState EventState { get; }
+        public OutboxMessageState EventState { get; private set; }
 
         public DateTime OccurredOnUtc { get; }
 
@@ -33,11 +33,17 @@ namespace JoggingApp.Core.Outbox
 
         public string Error { get; private set; }
 
-        public void SetProcessed(string error)
+        public void SetProcessedSuccessfully()
         {
             ProcessedOnUtc = DateTime.UtcNow;
-            Error = error;
+            EventState = OutboxMessageState.ProcessedSuccessfully;
+        }
 
+        public void SetFailed(string error)
+        {
+            ProcessedOnUtc = DateTime.UtcNow;
+            EventState = OutboxMessageState.Failed;
+            Error = error;
         }
     }
 }
