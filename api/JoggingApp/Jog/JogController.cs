@@ -65,18 +65,8 @@ namespace JoggingApp.Jogs
                 return BadRequest(validationResult.ToDictionary());
             }
             var jog = Jog.Create(User.GetId(), request.Distance, request.Time.ToTimeSpan(), _clock);
-            if (request.Coordinates is not null)
-            {
-                try
-                {
-                    var curentWeatherInfo = await _weatherService.FetchWeatherInfoAsync(request.Coordinates, cancellation);
-                    jog.AddLocationDetail(request.Coordinates, curentWeatherInfo);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex.ToString());
-                }
-            }
+            jog.SetLocationDetail(request.Coordinates);
+
             await _jogStorage.InsertAsync(jog, cancellation);
             return Ok();
         }

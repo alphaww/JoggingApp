@@ -1,4 +1,5 @@
-﻿using JoggingApp.Core.Clock;
+﻿using System.Net.Http.Headers;
+using JoggingApp.Core.Clock;
 using JoggingApp.Core.Jog.DomainEvents;
 using JoggingApp.Core.Users;
 using JoggingApp.Core.Weather;
@@ -38,11 +39,15 @@ namespace JoggingApp.Core.Jogs
             Time = time;
         }       
 
-        public void AddLocationDetail(Coordinates coordinates, WeatherInfo weatherInfo)
+        public void SetLocationDetail(Coordinates coordinates)
         {
-            JogLocation = new JogLocation(this, coordinates.Latitude,
-                coordinates.Longitude, weatherInfo.Location, weatherInfo.Description,
-                weatherInfo.Temperature, weatherInfo.FeelsLikeTemperature);
+            if (coordinates is null)
+            {
+                return;
+            }
+            //JogLocation = new JogLocation(this, coordinates.Latitude,
+            //    coordinates.Longitude, weatherInfo.Location, weatherInfo.Description,
+            //    weatherInfo.Temperature, weatherInfo.FeelsLikeTemperature);
 
             RaiseDomainEvent(new JogLocationSetDomainEvent(Id, coordinates));
         }
