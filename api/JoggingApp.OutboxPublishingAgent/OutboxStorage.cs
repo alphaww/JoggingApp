@@ -1,57 +1,52 @@
 ﻿using Dapper;
 using JoggingApp.Core.Outbox;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace JoggingApp.OutboxPublishingAgent
 {
     public class OutboxStorage
     {
-        private string _connectionString;
+        private readonly IConfiguration _configuration;
+        private readonly string _connectionString;
 
-        public OutboxStorage(string connectionString)
+        public OutboxStorage(IConfiguration configuration)
         {
-            _connectionString = connectionString;
+            _configuration = configuration;
+            _connectionString = _configuration["ConnectionString:DefaultConnection"];
         }
 
         public async Task<IEnumerable<OutboxMessage>> GetOutboxEvents()
         {
-            const string sql = "select [Id], [MessageType], [Message] " +
+            const string sql = "select [Id], [Type], [Content] " +
                                "from [dbo].[OutboxMessage] " +
-                               "where [EventState] = 1 " +
-                               "order by OccurredOnUtc asc;";
+                               "where [EventState] = 1 OR [EventState] = 3 ";
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                var changes = await connection.QueryAsync<OutboxMessage>(sql).ConfigureAwait(false);
-                return changes;
-            }
+            await using var connection = new SqlConnection(_connectionString);
+            connection.Open();
+            var changes = await connection.QueryAsync<OutboxMessage>(sql).ConfigureAwait(false);
+            return changes;
         }
 
         public async Task UpdateOutboxEventStateToProcessed(Guid Id)
         {
             const string sql = "update [dbo].[OutboxMessage] " +
                                "set EventState = 2, ProcessedOnUtc = @now " +
-                               "where [Id] = @Id and [EventState] = 1;";
+                               "where [Id] = @Id;";
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                await connection.ExecuteAsync(sql, new { Id, @now = DateTime.UtcNow }).ConfigureAwait(false);
-            }
+            await using var connection = new SqlConnection(_connectionString);
+            connection.Open();
+            await connection.ExecuteAsync(sql, new { Id, @now = DateTime.UtcNow }).ConfigureAwait(false);
         }
 
-        public async Task UpdateOutboxEventStateToFailed(Guid Id)
-        {
-            const string sql = "update [dbo].[OutboxMessage] " +
-                               "set EventState = 3, ProcessedOnUtc = @now " +
-                               "where [Id] = @Id and [EventState] = 1;";
+        public async Task UpdateOutboxEventStateToFailed(Guid Id, string error)
+        { 
+            string sql = $"update [dbo].[OutboxMessage] set EventState = 3, ProcessedOnUtc = @now, Error = @error" +
+                         $" where [Id] = @Id;";
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                await connection.ExecuteAsync(sql, new { Id, @now = DateTime.UtcNow }).ConfigureAwait(false);
-            }
+            await using var connection = new SqlConnection(_connectionString);
+            connection.Open();
+            await connection.ExecuteAsync(sql, new { Id, @error = error, @now = DateTime.UtcNow }).ConfigureAwait(false);
         }
     }
 }

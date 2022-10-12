@@ -1,5 +1,7 @@
 ﻿using JoggingApp.BackgroundJobs;
+using JoggingApp.OutboxPublishingAgent;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 
 namespace JoggingApp.Setup
@@ -8,12 +10,14 @@ namespace JoggingApp.Setup
     {
         public static void AddOutboxProcessingEngine(this WebApplicationBuilder app)
         {
+            app.Services.AddScoped<OutboxStorage>();
+
             app.Services.AddQuartz(configure =>
             {
-                var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob));
+                var jobKey = new JobKey(nameof(BackgroundPublishingService));
 
                 configure
-                    .AddJob<ProcessOutboxMessagesJob>(jobKey)
+                    .AddJob<BackgroundPublishingService>(jobKey)
                     .AddTrigger(
                         trigger =>
                             trigger.ForJob(jobKey)

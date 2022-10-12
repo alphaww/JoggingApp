@@ -29,6 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="..\JoggingApp.Core\JoggingApp.Core.csproj" />
     <ProjectReference Include="..\JoggingApp.EntityFramework\JoggingApp.EntityFramework.csproj" />
+    <ProjectReference Include="..\JoggingApp.OutboxPublishingAgent\JoggingApp.OutboxPublishingAgent.csproj" />
   </ItemGroup>
 
   <ItemGroup>

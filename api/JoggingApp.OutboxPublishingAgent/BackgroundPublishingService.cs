@@ -18,16 +18,16 @@ namespace JoggingApp.BackgroundJobs
         };
 
         private readonly IPublisher _publisher;
-        private readonly OutboxStorage _outboxStore;
-        public BackgroundPublishingService(IPublisher publisher)
+        private readonly OutboxStorage _outboxStorage;
+        public BackgroundPublishingService(IPublisher publisher, OutboxStorage outboxStorage)
         {
             _publisher = publisher;
-            _outboxStore = new OutboxStorage("");
+            _outboxStorage = outboxStorage;
         }
 
         public async Task Execute(IJobExecutionContext context)
         {
-            var messages = await _outboxStore.GetOutboxEvents();
+            var messages = await _outboxStorage.GetOutboxEvents();
 
             foreach (OutboxMessage outboxMessage in messages)
             {
@@ -52,13 +52,13 @@ namespace JoggingApp.BackgroundJobs
                         domainEvent,
                         context.CancellationToken));
 
-                if (result.FinalException is not null)
+                if (result.Outcome == OutcomeType.Failure)
                 {
-                   await _outboxStore.UpdateOutboxEventStateToFailed(outboxMessage.Id);
+                    await _outboxStorage.UpdateOutboxEventStateToFailed(outboxMessage.Id, result.FinalException?.ToString());
                 }
                 else
                 {
-                    await _outboxStore.UpdateOutboxEventStateToProcessed(outboxMessage.Id);
+                    await _outboxStorage.UpdateOutboxEventStateToProcessed(outboxMessage.Id);
                 }
             }
         }
