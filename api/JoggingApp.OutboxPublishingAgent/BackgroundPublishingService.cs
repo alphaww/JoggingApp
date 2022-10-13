@@ -18,47 +18,35 @@ namespace JoggingApp.BackgroundJobs
         };
 
         private readonly IPublisher _publisher;
-        private readonly IOutboxStorage _dapperOutboxStorage;
-        public BackgroundPublishingService(IPublisher publisher, IOutboxStorage dapperOutboxStorage)
+        private readonly IOutboxStorage _outboxStorage;
+        public BackgroundPublishingService(IPublisher publisher, IOutboxStorage outboxStorage)
         {
             _publisher = publisher;
-            _dapperOutboxStorage = dapperOutboxStorage;
+            _outboxStorage = outboxStorage;
         }
 
         public async Task Execute(IJobExecutionContext context)
         {
-            var messages = await _dapperOutboxStorage.GetOutboxEvents();
+            var outboxEvents = await _outboxStorage.GetOutboxEventsAsync();
 
-            foreach (OutboxMessage outboxMessage in messages)
+            foreach (OutboxMessage @event in outboxEvents)
             {
-                IDomainEvent domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(outboxMessage.Content, JsonSerializerSettings);
+                IDomainEvent domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(@event.Content, JsonSerializerSettings);
 
                 if (domainEvent is null)
                 {
                     continue;
                 }
 
-                AsyncRetryPolicy policy = Policy
-                    .Handle<Exception>()
-                    .WaitAndRetryAsync(
-                        3,
-                        attempt => TimeSpan.FromMilliseconds(50 * attempt));
+                AsyncRetryPolicy policy = Policy.Handle<Exception>().WaitAndRetryAsync(3, attempt => TimeSpan.FromMilliseconds(50 * attempt));
 
-                PolicyResult result = await policy.ExecuteAndCaptureAsync(() =>
-                    _publisher.Publish(
-                        domainEvent,
-                        context.CancellationToken));
+                PolicyResult result = await policy.ExecuteAndCaptureAsync(() => _publisher.Publish(domainEvent, context.CancellationToken));
 
-                //TODO: Update all in one transaction in ACID way
-                if (result.Outcome == OutcomeType.Failure)
-                {
-                    await _dapperOutboxStorage.UpdateOutboxEventStateToFailed(outboxMessage.Id, result.FinalException?.ToString());
-                }
-                else
-                {
-                    await _dapperOutboxStorage.UpdateOutboxEventStateToProcessed(outboxMessage.Id);
-                }
+
+                @event.SetEventState(result.Outcome == OutcomeType.Successful ? OutboxMessageState.Processed : OutboxMessageState.Failed);
             }
+
+            await _outboxStorage.UpdateOutboxEventsAsync(outboxEvents);
         }
     }
 }

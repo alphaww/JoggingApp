@@ -2,18 +2,28 @@
 using JoggingApp.Core.Outbox;
 using JoggingApp.OutboxPublishingAgent;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
+using SqlKata.Compilers;
+using SqlKata.Execution;
 
 namespace JoggingApp.Setup
 {
     public static class OutboxProcessingEngineSetup
     {
-        public static void AddOutboxProcessingEngine(this WebApplicationBuilder app)
+        public static void AddOutboxProcessingEngine(this WebApplicationBuilder builder)
         {
-            app.Services.AddScoped<IOutboxStorage, DapperOutboxStorage>();
+            builder.Services.AddScoped<QueryFactory>((e) =>
+            {
+                var connection = new SqlConnection(builder.Configuration["ConnectionString:DefaultConnection"]);
+                var compiler = new SqlServerCompiler();
+                return new QueryFactory(connection, compiler);
+            });
 
-            app.Services.AddQuartz(configure =>
+            builder.Services.AddScoped<IOutboxStorage, OutboxStorage>();
+
+            builder.Services.AddQuartz(configure =>
             {
                 var jobKey = new JobKey(nameof(BackgroundPublishingService));
 
@@ -30,7 +40,7 @@ namespace JoggingApp.Setup
                 configure.UseMicrosoftDependencyInjectionJobFactory();
             });
 
-            app.Services.AddQuartzHostedService();
+            builder.Services.AddQuartzHostedService();
         }
     }
 }

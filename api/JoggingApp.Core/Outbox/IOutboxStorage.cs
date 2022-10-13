@@ -2,11 +2,9 @@
 {
     public interface IOutboxStorage
     {
-        Task<IEnumerable<OutboxMessage>> GetOutboxEvents();
+        Task<IEnumerable<OutboxMessage>> GetOutboxEventsAsync(int batchSize = 20);
 
-        Task UpdateOutboxEventStateToProcessed(Guid Id);
-
-        Task UpdateOutboxEventStateToFailed(Guid Id, string error);
+        Task UpdateOutboxEventsAsync(IEnumerable<OutboxMessage> outboxEvents);
 
     }
 }
