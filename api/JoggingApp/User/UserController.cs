@@ -23,9 +23,8 @@ namespace JoggingApp.Users
         private readonly IUserStorage _userStorage;
         private readonly IHashService _hashService;
         private readonly ITokenWriter _tokenWriter;
-        private readonly IEmailSender _emailSender;
         private readonly IClock _clock;
-        private readonly UserRegisteredEmailTemplateRenderer _userRegisteredEmailTemplateRenderer;
+
         public UserController(
             IValidator<UserRegisterRequest> userRegisterRequestValidator,
             IValidator<UserAuthRequest> userAuthRequestValidator,
@@ -41,8 +40,6 @@ namespace JoggingApp.Users
             _userStorage = userStorage ?? throw new ArgumentNullException(nameof(userStorage));
             _hashService = hashService ?? throw new ArgumentNullException(nameof(hashService));
             _tokenWriter = tokenWriter ?? throw new ArgumentNullException(nameof(tokenWriter));
-            _emailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
-            _userRegisteredEmailTemplateRenderer = userRegisteredEmailTemplateRenderer ?? throw new ArgumentNullException(nameof(userRegisteredEmailTemplateRenderer));
             _clock = clock ?? throw new ArgumentNullException(nameof(clock));
         }
 
@@ -60,10 +57,8 @@ namespace JoggingApp.Users
             {
                 return Conflict($"User with email {request.Email} already exists.");
             }
-            var (user, activationToken) = Core.Users.User.Create(request.Email, request.Password, _hashService, _clock);
+            var user = Core.Users.User.Create(request.Email, request.Password, _hashService, _clock);
             await _userStorage.InsertAsync(user, cancellation);
-            var emailTemplate = await _userRegisteredEmailTemplateRenderer.RenderForUserActivationToken(activationToken);
-            await _emailSender.SendAsync(new MailMessage(request.Email, "Confirm account", emailTemplate));
             return Ok();      
         }
 

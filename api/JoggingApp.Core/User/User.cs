@@ -1,37 +1,37 @@
 ﻿using JoggingApp.Core.Clock;
 using JoggingApp.Core.Crypto;
+using JoggingApp.Core.Jog.DomainEvents;
 
 namespace JoggingApp.Core.Users
 {
-    public class User
+    public class User : Entity
     {
-        public static (User, UserActivationToken) Create(string email, string password, IHashService hashService, IClock clock)
+        public static User Create(string email, string password, IHashService hashService, IClock clock)
         {
             var user = new User(Guid.NewGuid(), email, hashService.Hash(password), UserState.Inactive);
             //Expiration time shouldd not be hardcoded. But will leave it as is for this demo purpose
             var activationToken = new UserActivationToken(clock.Now, clock.Now.AddMinutes(2), user);
             user.ActivationTokens.Add(activationToken);
-            return (user, activationToken);
+            return user;
         }
 
-        private User(Guid id, string email, string password, UserState state)
+        private User(Guid id, string email, string password, UserState state) : base(id)
         {
-            Id = id;
             Email = email;
             Password = password;
             State = state;
             ActivationTokens = new HashSet<UserActivationToken>();
+
+            RaiseDomainEvent(new UserRegisteredDomainEvent(id, this));
         }
 
-        public Guid Id { get; private set; }
+        public string Email { get; }
 
-        public string Email { get; private set; }
-
-        public string Password { get; private set; }
+        public string Password { get; }
 
         public UserState State { get; private set; }
 
-        public ICollection<UserActivationToken> ActivationTokens { get; private set; }
+        public ICollection<UserActivationToken> ActivationTokens { get; }
 
         public void Activate()
         {
