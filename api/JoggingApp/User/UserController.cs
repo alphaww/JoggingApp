@@ -30,9 +30,7 @@ namespace JoggingApp.Users
             IUserStorage userStorage, 
             IHashService hashService,
             ITokenWriter tokenWriter,
-            IEmailSender emailSender,
-            IClock clock,
-            UserRegisteredEmailTemplateRenderer userRegisteredEmailTemplateRenderer)
+            IClock clock)
         {
             _userRegisterRequestValidator = userRegisterRequestValidator ?? throw new ArgumentNullException(nameof(userRegisterRequestValidator));
             _userAuthRequestValidator = userAuthRequestValidator ?? throw new ArgumentNullException(nameof(userAuthRequestValidator));
