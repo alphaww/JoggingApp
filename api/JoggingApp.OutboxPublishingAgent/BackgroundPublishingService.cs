@@ -27,7 +27,7 @@ namespace JoggingApp.BackgroundJobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            var messages = await _dapperOutboxStorage.GetUnprocessedOutboxEvents();
+            var messages = await _dapperOutboxStorage.GetOutboxEvents();
 
             foreach (OutboxMessage outboxMessage in messages)
             {

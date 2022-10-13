@@ -16,7 +16,7 @@ namespace JoggingApp.OutboxPublishingAgent
             _connectionString = _configuration["ConnectionString:DefaultConnection"];
         }
 
-        public async Task<IEnumerable<OutboxMessage>> GetUnprocessedOutboxEvents()
+        public async Task<IEnumerable<OutboxMessage>> GetOutboxEvents()
         {
             const string sql = "select [Id], [Type], [Content] " +
                                "from [dbo].[OutboxMessage] " +
