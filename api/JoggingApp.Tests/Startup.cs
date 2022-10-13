@@ -70,20 +70,20 @@ namespace JoggingApp.Tests
              context.Users.Add(user2);
 
 
-             context.Add(Jog.Create(user1.Id, 2000, new TimeSpan(10, 0, 0),
+             context.Add(Jog.Create(user1.Id, 2000, new TimeSpan(10, 0, 0), null,
                 new FakeClock(new DateTime(2022, 1, 1))));
-             context.Add(Jog.Create(user1.Id, 1000, new TimeSpan(11, 15, 0),
+             context.Add(Jog.Create(user1.Id, 1000, new TimeSpan(11, 15, 0), null,
                 new FakeClock(new DateTime(2022, 2, 15))));
-             context.Add(Jog.Create(user1.Id, 13000, new TimeSpan(15, 2, 24),
+             context.Add(Jog.Create(user1.Id, 13000, new TimeSpan(15, 2, 24), null,
                 new FakeClock(new DateTime(2022, 3, 20))));
-             context.Add(Jog.Create(user1.Id, 3000, new TimeSpan(15, 2, 24),
+             context.Add(Jog.Create(user1.Id, 3000, new TimeSpan(15, 2, 24), null,
                 new FakeClock(new DateTime(2022, 6, 17))));
 
-             context.Add(Jog.Create(user2.Id, 2000, new TimeSpan(10, 0, 0),
+             context.Add(Jog.Create(user2.Id, 2000, new TimeSpan(10, 0, 0), null,
                 new FakeClock(new DateTime(2022, 1, 1))));
-             context.Add(Jog.Create(user2.Id, 1000, new TimeSpan(11, 15, 0),
+             context.Add(Jog.Create(user2.Id, 1000, new TimeSpan(11, 15, 0), null,
                 new FakeClock(new DateTime(2022, 2, 15))));
-             context.Add(Jog.Create(user2.Id, 13000, new TimeSpan(15, 2, 24),
+             context.Add(Jog.Create(user2.Id, 13000, new TimeSpan(15, 2, 24), null,
                 new FakeClock(new DateTime(2022, 3, 20))));
 
             context.SaveChanges();

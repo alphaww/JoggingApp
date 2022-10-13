@@ -1,4 +1,6 @@
-﻿using JoggingApp.Core.Outbox;
+﻿using Dapper;
+using JoggingApp.Core.Outbox;
+using Microsoft.Data.SqlClient;
 using SqlKata;
 using SqlKata.Execution;
 
@@ -28,12 +30,14 @@ namespace JoggingApp.OutboxPublishingAgent
         {
             if (outboxEvents.Any())
             {
-                var query = new Query(nameof(OutboxMessage));
                 foreach (var @event in outboxEvents)
                 {
-                    query = query
+
+                    //This is bad.. needs to go into transaction ( sql )
+                    await _queryFactory
+                        .Query(nameof(OutboxMessage))
                         .Where(nameof(OutboxMessage.Id), @event.Id)
-                        .AsUpdate(new
+                        .UpdateAsync(new
                         {
                             @event.Type,
                             @event.Content,
@@ -44,7 +48,7 @@ namespace JoggingApp.OutboxPublishingAgent
                         });
                 }
 
-                await _queryFactory.ExecuteAsync(query);
+                //await _queryFactory.ExecuteAsync(query);
             }
         }
     }

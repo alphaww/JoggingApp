@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Headers;
-using JoggingApp.Core.Clock;
+﻿using JoggingApp.Core.Clock;
 using JoggingApp.Core.Jog.DomainEvents;
 using JoggingApp.Core.Users;
 using JoggingApp.Core.Weather;
@@ -8,24 +7,27 @@ namespace JoggingApp.Core.Jogs
 {
     public class Jog : Entity
     {
-        public static Jog Create(Guid userId, int distance, TimeSpan time, IClock clock)
+        public static Jog Create(Guid userId, int distance, TimeSpan time, Coordinates coordinates, IClock clock)
         {
-            return new Jog(userId, distance, time, clock.Now.Date);
+            return new Jog(userId, distance, time, clock.Now.Date, coordinates);
         }
 
-        private Jog(Guid userId, int distance, TimeSpan time, DateTime date) : base(Guid.NewGuid())
+        private Jog(Guid userId, int distance, TimeSpan time, DateTime date, Coordinates coordinates) : base(Guid.NewGuid())
         {
             UserId = userId;
             Date = date;
             Distance = distance;
             Time = time;
+
+            if (coordinates is not null)
+                RaiseDomainEvent(new JogLocationSetDomainEvent(Id, coordinates));
         }
 
         private Jog()
         {
         }
 
-        public DateTime Date { get; private set; }
+        public DateTime Date { get; }
         public int Distance { get; private set; }
         public TimeSpan Time { get; private set; }
         public User User { get; private set; }
@@ -37,14 +39,6 @@ namespace JoggingApp.Core.Jogs
         {
             Distance = distance;
             Time = time;
-        }       
-
-        public void RaiseLocationDetailSetEventIfCoordinatesProvided(Coordinates coordinates)
-        {
-            if (coordinates is null)
-                return;
-
-            RaiseDomainEvent(new JogLocationSetDomainEvent(Id, coordinates));
         }
 
         public void SetLocationDetail(Coordinates coordinates, WeatherInfo weatherInfo)

@@ -60,9 +60,7 @@ namespace JoggingApp.Jogs
             {
                 return BadRequest(validationResult.ToDictionary());
             }
-            var jog = Jog.Create(User.GetId(), request.Distance, request.Time.ToTimeSpan(), _clock);
-            jog.RaiseLocationDetailSetEventIfCoordinatesProvided(request.Coordinates);
-
+            var jog = Jog.Create(User.GetId(), request.Distance, request.Time.ToTimeSpan(), request.Coordinates, _clock);
             await _jogStorage.InsertAsync(jog, cancellation);
             return Ok();
         }
