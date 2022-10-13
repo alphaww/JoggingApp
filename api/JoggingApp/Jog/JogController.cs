@@ -21,8 +21,6 @@ namespace JoggingApp.Jogs
         private readonly IValidator<JogUpdateRequest> _jogUpdateValidator;
         private readonly IValidator<JogInsertRequest> _jogInsertValidator;
         private readonly IJogStorage _jogStorage;
-        private readonly IWeatherService _weatherService;
-        private readonly ILogger<JogController> _logger;
         private readonly IClock _clock;
         public JogController(IJogStorage jogStorage,
             IWeatherService weatherService,
@@ -32,8 +30,6 @@ namespace JoggingApp.Jogs
             IClock clock)
         {
             _jogStorage = jogStorage ?? throw new ArgumentNullException(nameof(jogStorage));
-            _weatherService = weatherService ?? throw new ArgumentNullException(nameof(weatherService));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _jogUpdateValidator = jogUpdateValidator ?? throw new ArgumentNullException(nameof(jogUpdateValidator));
             _jogInsertValidator = jogInsertValidator ?? throw new ArgumentNullException(nameof(jogInsertValidator));
             _clock = clock ?? throw new ArgumentNullException(nameof(clock));
