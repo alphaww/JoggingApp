@@ -1,4 +1,5 @@
-﻿using JoggingApp.Core.Clock;
+﻿using System.Text.Json.Serialization;
+using JoggingApp.Core.Clock;
 using JoggingApp.Core.Crypto;
 using JoggingApp.Core.Jog.DomainEvents;
 
@@ -22,7 +23,7 @@ namespace JoggingApp.Core.Users
             State = state;
             ActivationTokens = new HashSet<UserActivationToken>();
 
-            RaiseDomainEvent(new UserRegisteredDomainEvent(id, this));
+            RaiseDomainEvent(new UserRegisteredDomainEvent(Email));
         }
 
         public string Email { get; }

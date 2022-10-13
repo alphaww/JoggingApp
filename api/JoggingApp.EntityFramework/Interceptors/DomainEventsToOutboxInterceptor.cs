@@ -34,7 +34,8 @@ namespace JoggingApp.EntityFramework.Interceptors
                         domainEvent,
                         new JsonSerializerSettings
                         {
-                            TypeNameHandling = TypeNameHandling.All
+                            TypeNameHandling = TypeNameHandling.All,
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                         });
 
                     return new OutboxMessage(domainEvent.GetType().Namespace, content, DateTime.UtcNow);

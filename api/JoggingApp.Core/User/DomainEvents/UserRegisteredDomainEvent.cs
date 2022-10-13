@@ -3,7 +3,7 @@ using JoggingApp.Core.Weather;
 
 namespace JoggingApp.Core.Jog.DomainEvents
 {
-    public sealed record UserRegisteredDomainEvent(Guid UserId, User User) : IDomainEvent
+    public sealed record UserRegisteredDomainEvent(string Email) : IDomainEvent
     {
     }
 }
