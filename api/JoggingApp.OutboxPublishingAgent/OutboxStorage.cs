@@ -26,25 +26,26 @@ namespace JoggingApp.OutboxPublishingAgent
 
         public async Task UpdateOutboxEventsAsync(IEnumerable<OutboxMessage> outboxEvents)
         {
-            if (!outboxEvents.Any())
-                await Task.CompletedTask;
-
-            var query = new Query(nameof(OutboxMessage));
-            foreach (var @event in outboxEvents)
+            if (outboxEvents.Any())
             {
-                query = query
-                    .Where(nameof(OutboxMessage.Id), @event.Id)
-                    .AsUpdate(new
-                    {
-                        @event.Type,
-                        @event.Content,
-                        @event.EventState,
-                        @event.OccurredOnUtc,
-                        @event.ProcessedOnUtc,
-                        @event.Error
-                    });
+                var query = new Query(nameof(OutboxMessage));
+                foreach (var @event in outboxEvents)
+                {
+                    query = query
+                        .Where(nameof(OutboxMessage.Id), @event.Id)
+                        .AsUpdate(new
+                        {
+                            @event.Type,
+                            @event.Content,
+                            @event.EventState,
+                            @event.OccurredOnUtc,
+                            @event.ProcessedOnUtc,
+                            @event.Error
+                        });
+                }
+
+                await _queryFactory.ExecuteAsync(query);
             }
-            await _queryFactory.ExecuteAsync(query);
         }
     }
 }
