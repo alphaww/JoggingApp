@@ -9,7 +9,7 @@
 	<ItemGroup>
 		<PackageReference Include="MediatR" Version="11.0.0" />
 		<PackageReference Include="MediatR.Contracts" Version="1.0.1" />
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.4" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="Quartz.Extensions.Hosting" Version="3.5.0" />
 		<PackageReference Include="Polly" Version="7.2.3" />
