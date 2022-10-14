@@ -7,11 +7,12 @@ namespace JoggingApp.Core.Outbox
         private OutboxMessage()
         {
         }
-        public OutboxMessage(string type, string content, DateTime occurredOn, DateTime? processedOnUtc = null, string error = null)
+        public OutboxMessage(string type, string content, EventType eventType, DateTime occurredOn, DateTime? processedOnUtc = null, string error = null)
         {
             Id = Guid.NewGuid();
             Type = type;
             Content = content;
+            EventType = eventType;
             EventState = OutboxMessageState.ReadyForProcessing;
             OccurredOnUtc = occurredOn;
             ProcessedOnUtc = processedOnUtc;
@@ -23,6 +24,8 @@ namespace JoggingApp.Core.Outbox
         public string Type { get; }
 
         public string Content { get; }
+
+        public EventType EventType { get; private set; }
 
         public OutboxMessageState EventState { get; private set; }
 

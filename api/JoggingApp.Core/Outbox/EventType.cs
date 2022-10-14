@@ -1,4 +1,4 @@
-﻿namespace JoggingApp.OutboxPublishingAgent
+﻿namespace JoggingApp.Core.Outbox
 {
     public enum EventType : int
     {
