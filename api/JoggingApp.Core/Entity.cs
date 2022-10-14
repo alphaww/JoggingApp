@@ -26,10 +26,10 @@ namespace JoggingApp.Core
 
     public interface IDomainEvent : INotification
     {
-        DomainEventDispatchingStrategy DomainEventDispatchingStrategy { get; }
+        DomainEventConsistencyStrategy DomainEventConsistencyStrategy { get; }
     }
 
-    public enum DomainEventDispatchingStrategy : int
+    public enum DomainEventConsistencyStrategy : int
     {
         StandardDispatch = 1,
         EventualConsistency = 2
