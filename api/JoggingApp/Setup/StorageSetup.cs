@@ -13,7 +13,7 @@ namespace JoggingApp.Setup
     {
         public static void AddStorage(this WebApplicationBuilder builder)
         {
-            builder.Services.AddSingleton<DomainEventsHandlerInterceptor>();
+            builder.Services.AddScoped<DomainEventsHandlerInterceptor>();
 
             builder.Services.AddDbContext<JoggingAppDbContext>(
                 (sp, optionsBuilder) =>

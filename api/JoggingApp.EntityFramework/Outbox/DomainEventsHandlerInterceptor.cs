@@ -17,14 +17,14 @@ namespace JoggingApp.EntityFramework.Interceptors
             _publisher = publisher;
         }
 
-        public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
+        public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
             InterceptionResult<int> result, CancellationToken cancellationToken = default)
         {
             _dbContext = eventData.Context;
 
             if (_dbContext is null)
             {
-                return base.SavingChangesAsync(eventData, result, cancellationToken);
+               return await base.SavingChangesAsync(eventData, result, cancellationToken);
             }
 
             var domainEvents = _dbContext.ChangeTracker.Entries<Entity>().Select(x => x.Entity)
@@ -36,17 +36,18 @@ namespace JoggingApp.EntityFramework.Interceptors
                 })
                 .ToList();
 
+            await ProcessStandardDispatchEvents(domainEvents.Where(de =>
+                    de.DomainEventDispatchingStrategy == DomainEventDispatchingStrategy.StandardDispatch),
+                cancellationToken); 
 
-            ProcessStandardDispatchEvents(domainEvents.Where(de =>
-                    de.DomainEventDispatchingStrategy == DomainEventDispatchingStrategy.StandardDispatch)); 
+           await ProcessOutboxEvents(domainEvents.Where(de =>
+                    de.DomainEventDispatchingStrategy == DomainEventDispatchingStrategy.EventualConsistency),
+                cancellationToken);
 
-            ProcessOutboxEvents(domainEvents.Where(de =>
-                    de.DomainEventDispatchingStrategy == DomainEventDispatchingStrategy.EventualConsistency));
-
-            return base.SavingChangesAsync(eventData, result, cancellationToken);
+           return await base.SavingChangesAsync(eventData, result, cancellationToken);
         }
 
-        private void ProcessOutboxEvents(IEnumerable<IDomainEvent> events)
+        private async Task ProcessOutboxEvents(IEnumerable<IDomainEvent> events, CancellationToken cancellationToken)
         {
             var outboxMessages = events
                 .Select(domainEvent =>
@@ -65,14 +66,14 @@ namespace JoggingApp.EntityFramework.Interceptors
                 })
                 .ToList();
 
-            _dbContext.Set<OutboxMessage>().AddRange(outboxMessages);
+            await _dbContext.Set<OutboxMessage>().AddRangeAsync(outboxMessages, cancellationToken);
         }
 
-        private void ProcessStandardDispatchEvents(IEnumerable<IDomainEvent> events)
+        private async Task ProcessStandardDispatchEvents(IEnumerable<IDomainEvent> events, CancellationToken cancellationToken)
         {
             foreach (var domainEvent in events)
             {
-                _publisher.Publish(domainEvent);
+                await _publisher.Publish(domainEvent, cancellationToken);
             }
         }
     }

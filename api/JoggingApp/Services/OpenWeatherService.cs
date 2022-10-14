@@ -10,18 +10,19 @@ namespace JoggingApp.Services
 {
     public class OpenWeatherService : IWeatherService
     {
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
-        public OpenWeatherService(HttpClient httpClient, IConfiguration configuration)
+        public OpenWeatherService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
         }
         public async Task<WeatherInfo> FetchWeatherInfoAsync(Coordinates coordinates, CancellationToken cancellation = default)
         {
             var appId = _configuration["OpenWeather:AppId"];
             var url = _configuration["OpenWeather:Url"];
-            var response = await _httpClient.GetAsync($"{url}?lat={coordinates.Latitude}&AppId={appId}&lon={coordinates.Longitude}&units=metric", cancellation);
+            var httpClient = _httpClientFactory.CreateClient();
+            var response = await httpClient.GetAsync($"{url}?lat={coordinates.Latitude}&AppId={appId}&lon={coordinates.Longitude}&units=metric", cancellation);
             var content = await response.Content.ReadAsStringAsync(cancellation);
             var obj = JsonConvert.DeserializeObject<JObject>(content);
 
