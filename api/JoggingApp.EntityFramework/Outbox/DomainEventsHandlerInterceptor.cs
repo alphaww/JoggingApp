@@ -40,14 +40,14 @@ namespace JoggingApp.EntityFramework.Interceptors
                     de.DomainEventDispatchingStrategy == DomainEventDispatchingStrategy.StandardDispatch),
                 cancellationToken); 
 
-           await ProcessOutboxEvents(domainEvents.Where(de =>
+           await ProcessOutboxDipatchEvents(domainEvents.Where(de =>
                     de.DomainEventDispatchingStrategy == DomainEventDispatchingStrategy.EventualConsistency),
                 cancellationToken);
 
            return await base.SavingChangesAsync(eventData, result, cancellationToken);
         }
 
-        private async Task ProcessOutboxEvents(IEnumerable<IDomainEvent> events, CancellationToken cancellationToken)
+        private async Task ProcessOutboxDipatchEvents(IEnumerable<IDomainEvent> events, CancellationToken cancellationToken)
         {
             var outboxMessages = events
                 .Select(domainEvent =>
