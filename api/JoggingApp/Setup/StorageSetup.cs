@@ -13,9 +13,16 @@ namespace JoggingApp.Setup
     {
         public static void AddStorage(this WebApplicationBuilder builder)
         {
-            builder.Services.AddDbContext<JoggingAppDbContext>(context =>
-                context.UseSqlServer(builder.Configuration["ConnectionString:DefaultConnection"])
-                    .AddInterceptors(new DomainEventsToOutboxInterceptor()));
+            builder.Services.AddSingleton<DomainEventsHandlerInterceptor>();
+
+            builder.Services.AddDbContext<JoggingAppDbContext>(
+                (sp, optionsBuilder) =>
+                {
+                    var inteceptor = sp.GetService<DomainEventsHandlerInterceptor>();
+
+                    optionsBuilder.UseSqlServer(builder.Configuration["ConnectionString:DefaultConnection"])
+                        .AddInterceptors(inteceptor);
+                });
 
             builder.Services.AddScoped<IUserStorage, UserStorage>();
             builder.Services.AddScoped<IJogStorage, JogStorage>();

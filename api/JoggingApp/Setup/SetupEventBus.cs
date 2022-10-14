@@ -2,8 +2,6 @@
 using JoggingApp.BuildingBlocks.EventBus.Abstractions;
 using JoggingApp.BuildingBlocks.EventBusRabbitMQ;
 using JoggingApp.Users.IntegrationEvents;
-using JoggingApp.Users.EventHandlers;
-using JoggingApp.Users.IntegrationEvents;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

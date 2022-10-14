@@ -1,4 +1,5 @@
-﻿using JoggingApp.Core.Jogs;
+﻿using JoggingApp.Core;
+using JoggingApp.Core.Jogs;
 using JoggingApp.Core.Outbox;
 using JoggingApp.Core.Users;
 using Microsoft.EntityFrameworkCore;
