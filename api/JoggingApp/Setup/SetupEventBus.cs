@@ -1,6 +1,9 @@
 ﻿using JoggingApp.BuildingBlocks.EventBus;
 using JoggingApp.BuildingBlocks.EventBus.Abstractions;
 using JoggingApp.BuildingBlocks.EventBusRabbitMQ;
+using JoggingApp.Users.IntegrationEvents;
+using JoggingApp.Users.EventHandlers;
+using JoggingApp.Users.IntegrationEvents;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,6 +16,8 @@ namespace JoggingApp.Setup
         public static void AddEventBus(this WebApplicationBuilder builder)
         {
             builder.Services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
+
+            builder.Services.AddTransient<UserRegisteredIntegrationEventHandler>();
 
             builder.Services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
             {
@@ -58,7 +63,11 @@ namespace JoggingApp.Setup
                     retryCount = int.Parse(builder.Configuration["EventBus:RetryCount"]);
                 }
 
-                return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
+                var eventBus = new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
+
+                eventBus.Subscribe<UserRegisteredIntegrationEvent, UserRegisteredIntegrationEventHandler>();
+
+                return eventBus;
             });
         }
     }
