@@ -27,6 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ClassLibrary1\EventBus.RabbitMQ.csproj" />
+    <ProjectReference Include="..\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\JoggingApp.Core\JoggingApp.Core.csproj" />
     <ProjectReference Include="..\JoggingApp.EntityFramework\JoggingApp.EntityFramework.csproj" />
     <ProjectReference Include="..\JoggingApp.OutboxPublishingAgent\JoggingApp.OutboxPublishingAgent.csproj" />

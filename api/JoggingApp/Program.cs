@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMediatR(AssemblyReference.Assembly);
 builder.AddStorage();
+builder.AddEventBus();
 builder.AddOutboxProcessingEngine();
 builder.Services.AddWeatherService();
 builder.Services.AddHttpClient();
