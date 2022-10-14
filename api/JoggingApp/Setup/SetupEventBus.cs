@@ -12,6 +12,8 @@ namespace JoggingApp.Setup
     {
         public static void AddEventBus(this WebApplicationBuilder builder)
         {
+            builder.Services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
+
             builder.Services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
             {
                 var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();

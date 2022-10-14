@@ -4,7 +4,7 @@ namespace JoggingApp.BuildingBlocks.EventBusRabbitMQ;
 
 public class EventBusRabbitMQ : IEventBus, IDisposable
 {
-    private const string BROKER_NAME = "eshop_event_bus";
+    private const string BROKER_NAME = "jogingapp_event_bus";
 
     private readonly IRabbitMQPersistentConnection _persistentConnection;
     private readonly ILogger<EventBusRabbitMQ> _logger;

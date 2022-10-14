@@ -16,8 +16,8 @@ namespace JoggingApp.Users.EventHandlers
 
         public Task Handle(UserRegisteredDomainEvent @event, CancellationToken cancellationToken)
         {
-           _eventBus.Publish(new UserRegisteredIntegrationEvent(@event.Email));
-           return Task.CompletedTask;
+            _eventBus.Publish(new UserRegisteredIntegrationEvent(@event.Email));
+            return Task.CompletedTask;
         }
     }
 }
