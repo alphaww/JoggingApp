@@ -15,9 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JoggingApp.OutboxPublishing
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildingBlocks", "BuildingBlocks", "{EDD58F35-E96D-4C5E-B25C-29F7E01357B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus", "EventBus\EventBus.csproj", "{9C6C0816-71CA-44CA-A79F-B1F25148F80A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus", "EventBus\EventBus.csproj", "{9C6C0816-71CA-44CA-A79F-B1F25148F80A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.RabbitMQ", "EventBus.RabbitMQ\EventBus.RabbitMQ.csproj", "{20C4F784-6B96-4333-81E5-979F50403A27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoggingApp.EmailService", "JoggingApp.EmailService\JoggingApp.EmailService.csproj", "{D4202A89-A047-4F9C-9CDD-3B6B1193FD15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,10 @@ Global
 		{20C4F784-6B96-4333-81E5-979F50403A27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20C4F784-6B96-4333-81E5-979F50403A27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20C4F784-6B96-4333-81E5-979F50403A27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4202A89-A047-4F9C-9CDD-3B6B1193FD15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4202A89-A047-4F9C-9CDD-3B6B1193FD15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4202A89-A047-4F9C-9CDD-3B6B1193FD15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4202A89-A047-4F9C-9CDD-3B6B1193FD15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
