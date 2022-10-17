@@ -1,11 +1,8 @@
 ﻿using JoggingApp.Core;
 using JoggingApp.Core.Outbox;
-using JoggingApp.OutboxPublishingAgent;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using Polly;
-using Polly.Retry;
 using Quartz;
 
 namespace JoggingApp.BackgroundJobs
@@ -18,29 +15,30 @@ namespace JoggingApp.BackgroundJobs
             TypeNameHandling = TypeNameHandling.All
         };
 
-        private readonly IOutboxStorage _outboxStorage;
         private readonly IServiceScopeFactory _scopeFactory;
 
-        public BackgroundPublishingServiceAsync(IOutboxStorage outboxStorage, IServiceScopeFactory scopeFactory)
+        public BackgroundPublishingServiceAsync(IServiceScopeFactory scopeFactory)
         {
-            _outboxStorage = outboxStorage;
             _scopeFactory = scopeFactory;
         }
 
         public async Task Execute(IJobExecutionContext context)
         {
-            var outboxEvents = await _outboxStorage.GetOutboxEventsAsync();
+            using var scope = _scopeFactory.CreateScope();
+            var repository = scope.ServiceProvider.GetRequiredService<IOutboxStorage>();
+
+            var outboxEvents = await repository.GetOutboxEventsAsync();
             
             foreach (var @event in outboxEvents)
             {
                 @event.SetEventState(OutboxMessageState.InTransit);
-                await _outboxStorage.UpdateOutboxEventAsync(@event);
+                await repository.UpdateOutboxEventAsync(@event);
 
-                Execute(@event);
+                HandleEvent(@event);
             }
         }
 
-        public void Execute(OutboxMessage @event)
+        public void HandleEvent(OutboxMessage @event)
         {
             Task.Run(async () =>
             {

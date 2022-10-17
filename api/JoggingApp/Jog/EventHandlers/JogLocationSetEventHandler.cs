@@ -1,4 +1,5 @@
-﻿using JoggingApp.Core.Jog.DomainEvents;
+﻿using System;
+using JoggingApp.Core.Jog.DomainEvents;
 using JoggingApp.Core.Jogs;
 using JoggingApp.Core.Weather;
 using System.Threading;
