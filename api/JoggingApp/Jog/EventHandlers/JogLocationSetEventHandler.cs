@@ -18,7 +18,7 @@ namespace JoggingApp.Jogs.EventHandlers
         }
 
         public async Task Handle(JogLocationSetDomainEvent @event, CancellationToken cancellationToken)
-        { 
+        {
             Thread.Sleep(100000);
 
             var weatherInfo = await _weatherService.FetchWeatherInfoAsync(@event.Coordinates, cancellationToken);

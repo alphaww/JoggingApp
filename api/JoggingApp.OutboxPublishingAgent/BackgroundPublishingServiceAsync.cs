@@ -3,6 +3,8 @@ using JoggingApp.Core.Outbox;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Polly;
+using Polly.Retry;
 using Quartz;
 
 namespace JoggingApp.BackgroundJobs
@@ -34,11 +36,11 @@ namespace JoggingApp.BackgroundJobs
                 @event.SetEventState(OutboxMessageState.InTransit);
                 await repository.UpdateOutboxEventAsync(@event);
 
-                HandleEvent(@event);
+                HandleEvent(@event, context.CancellationToken);
             }
         }
 
-        public void HandleEvent(OutboxMessage @event)
+        public void HandleEvent(OutboxMessage @event, CancellationToken cancellationToken)
         {
             Task.Run(async () =>
             {
@@ -49,19 +51,15 @@ namespace JoggingApp.BackgroundJobs
 
                 var domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(@event.Content, JsonSerializerSettings);
 
-                try
-                {
-                    await publisher.Publish(domainEvent);
-                }
-                catch (Exception ex)
-                {
-                    @event.SetEventState(OutboxMessageState.Fail, ex.ToString());
-                    await repository.UpdateOutboxEventAsync(@event);
-                }
+                AsyncRetryPolicy policy = Policy.Handle<Exception>().WaitAndRetryAsync(3, attempt => TimeSpan.FromMilliseconds(50 * attempt));
 
-                @event.SetEventState(OutboxMessageState.Done);
-                await repository.UpdateOutboxEventAsync(@event);
-            });
+                PolicyResult publishResult = await policy.ExecuteAndCaptureAsync(() => publisher.Publish(domainEvent, cancellationToken));
+
+                @event.SetEventState(publishResult.Outcome == OutcomeType.Successful ? OutboxMessageState.Done : OutboxMessageState.Fail);
+
+                await policy.ExecuteAsync(() => repository.UpdateOutboxEventAsync(@event));
+            }, 
+             cancellationToken);
         }
     }
 }
