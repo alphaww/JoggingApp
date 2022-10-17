@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoggingApp.EmailService", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JoggingApp.IntegrationEvents", "JoggingApp.IntegrationEvents\JoggingApp.IntegrationEvents.csproj", "{7A7775B6-44FE-4A20-9B6E-D2EFAD0DBC81}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{101F7AD9-1180-4A3C-A7B5-16486B10364B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,8 +72,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{C8F072BB-4AEC-4A0E-8CE9-84C96AC90897} = {101F7AD9-1180-4A3C-A7B5-16486B10364B}
 		{9C6C0816-71CA-44CA-A79F-B1F25148F80A} = {EDD58F35-E96D-4C5E-B25C-29F7E01357B8}
 		{20C4F784-6B96-4333-81E5-979F50403A27} = {EDD58F35-E96D-4C5E-B25C-29F7E01357B8}
+		{4B413D10-4F58-4580-8075-F9C4A375DAF9} = {101F7AD9-1180-4A3C-A7B5-16486B10364B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {16F71E13-2DBD-4335-97AC-62BBAFC5730C}

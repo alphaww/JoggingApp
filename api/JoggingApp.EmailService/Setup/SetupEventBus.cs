@@ -9,6 +9,8 @@ namespace JoggingApp.EemailService
     {
         public static void AddEventBus(this WebApplicationBuilder builder)
         {
+            builder.Services.AddTransient<SendEmailIntegrationEventHandler>();
+
             builder.Services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
 
             builder.Services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
