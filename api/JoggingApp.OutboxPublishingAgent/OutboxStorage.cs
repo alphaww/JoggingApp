@@ -28,33 +28,18 @@ namespace JoggingApp.OutboxPublishingAgent
 
         public async Task UpdateOutboxEventAsync(OutboxMessage outboxEvent)
         {
-            await UpdateOutboxEventsAsync(new[] { outboxEvent });
-        }
-
-        public async Task UpdateOutboxEventsAsync(IEnumerable<OutboxMessage> outboxEvents)
-        {
-            if (outboxEvents.Any())
-            {
-                foreach (var @event in outboxEvents)
+            await _queryFactory
+                .Query(nameof(OutboxMessage))
+                .Where(nameof(OutboxMessage.Id), outboxEvent.Id)
+                .UpdateAsync(new
                 {
-
-                    //This is bad.. needs to go into transaction ( sql )
-                    await _queryFactory
-                        .Query(nameof(OutboxMessage))
-                        .Where(nameof(OutboxMessage.Id), @event.Id)
-                        .UpdateAsync(new
-                        {
-                            @event.Type,
-                            @event.Content,
-                            @event.EventState,
-                            @event.OccurredOnUtc,
-                            @event.ProcessedOnUtc,
-                            @event.Error
-                        });
-                }
-
-                //await _queryFactory.ExecuteAsync(query);
-            }
+                    outboxEvent.Type,
+                    outboxEvent.Content,
+                    outboxEvent.EventState,
+                    outboxEvent.OccurredOnUtc,
+                    outboxEvent.ProcessedOnUtc,
+                    outboxEvent.Error
+                });
         }
     }
 }
