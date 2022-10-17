@@ -20,10 +20,15 @@ namespace JoggingApp.OutboxPublishingAgent
             return await _queryFactory.Query(nameof(OutboxMessage))
                 .Select(nameof(OutboxMessage.Id), nameof(OutboxMessage.Type), nameof(OutboxMessage.Content),
                     nameof(OutboxMessage.OccurredOnUtc), nameof(OutboxMessage.ProcessedOnUtc), nameof(OutboxMessage.Error))
-                .WhereIn(nameof(OutboxMessage.EventState), new[] { OutboxMessageState.ReadyForProcessing , OutboxMessageState.Failed })
+                .WhereIn(nameof(OutboxMessage.EventState), new[] { OutboxMessageState.ReadyForProcessing , OutboxMessageState.Fail })
                 .OrderBy(nameof(OutboxMessage.OccurredOnUtc))
                 .Take(batchSize)
                 .GetAsync<OutboxMessage>();
+        }
+
+        public async Task UpdateOutboxEventAsync(OutboxMessage outboxEvent)
+        {
+            await UpdateOutboxEventsAsync(new[] { outboxEvent });
         }
 
         public async Task UpdateOutboxEventsAsync(IEnumerable<OutboxMessage> outboxEvents)

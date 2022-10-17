@@ -25,16 +25,16 @@ namespace JoggingApp.Setup
 
             builder.Services.AddQuartz(configure =>
             {
-                var jobKey = new JobKey(nameof(BackgroundPublishingService));
+                var jobKey = new JobKey(nameof(BackgroundPublishingServiceAsync));
 
                 configure
-                    .AddJob<BackgroundPublishingService>(jobKey)
+                    .AddJob<BackgroundPublishingServiceAsync>(jobKey)
                     .AddTrigger(
                         trigger =>
                             trigger.ForJob(jobKey)
                                 .WithSimpleSchedule(
                                     schedule =>
-                                        schedule.WithIntervalInSeconds(10)
+                                        schedule.WithIntervalInSeconds(20)
                                             .RepeatForever()));
 
                 configure.UseMicrosoftDependencyInjectionJobFactory();

@@ -17,8 +17,8 @@ namespace JoggingApp.Jogs.EventHandlers
         }
 
         public async Task Handle(JogLocationSetDomainEvent @event, CancellationToken cancellationToken)
-        {
-           var weatherInfo = await _weatherService.FetchWeatherInfoAsync(@event.Coordinates, cancellationToken);
+        { 
+            var weatherInfo = await _weatherService.FetchWeatherInfoAsync(@event.Coordinates, cancellationToken);
            var jogToUpdate = await _jogStorage.GetByJogIdAsync(@event.JogId, cancellationToken);
            jogToUpdate.SetLocationDetail(@event.Coordinates, weatherInfo);
            await _jogStorage.UpdateAsync(jogToUpdate, cancellationToken);

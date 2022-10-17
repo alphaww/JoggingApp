@@ -3,7 +3,8 @@
     public enum OutboxMessageState : int
     {
         ReadyForProcessing = 1,
-        Processed = 2,
-        Failed = 3
+        InTransit = 2,
+        Done = 3,
+        Fail = 4
     }
 }
