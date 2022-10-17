@@ -1,10 +1,6 @@
 ﻿using JoggingApp.BuildingBlocks.EventBus;
 using JoggingApp.BuildingBlocks.EventBus.Abstractions;
 using JoggingApp.BuildingBlocks.EventBusRabbitMQ;
-using JoggingApp.Users.IntegrationEvents;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
 namespace JoggingApp.EemailService
@@ -59,11 +55,12 @@ namespace JoggingApp.EemailService
                     retryCount = int.Parse(builder.Configuration["EventBus:RetryCount"]);
                 }
 
-                var eventBus = new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope,
-                    eventBusSubcriptionsManager, subscriptionClientName, retryCount);
+                var eventBus = new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
 
                 return eventBus;
             });
+
+            
         }
     }
 }
