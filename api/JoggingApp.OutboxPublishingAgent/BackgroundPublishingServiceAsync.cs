@@ -52,15 +52,15 @@ namespace JoggingApp.BackgroundJobs
                 try
                 {
                     await publisher.Publish(domainEvent);
-
-                    @event.SetEventState(OutboxMessageState.Done);
-                    await repository.UpdateOutboxEventAsync(@event);
                 }
-                catch 
+                catch (Exception ex)
                 {
-                    @event.SetEventState(OutboxMessageState.Fail);
+                    @event.SetEventState(OutboxMessageState.Fail, ex.ToString());
                     await repository.UpdateOutboxEventAsync(@event);
                 }
+
+                @event.SetEventState(OutboxMessageState.Done);
+                await repository.UpdateOutboxEventAsync(@event);
             });
         }
     }
