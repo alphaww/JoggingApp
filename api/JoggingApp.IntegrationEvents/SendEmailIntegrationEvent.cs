@@ -2,6 +2,6 @@
 
 namespace JoggingApp.IntegrationEvents;
 
-public record SendEmailIntegrationEvent(string Email, string Body) : IntegrationEvent
+public record SendEmailIntegrationEvent(string Email, string Subject, string Body) : IntegrationEvent
 {
 }
