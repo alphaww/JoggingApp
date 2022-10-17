@@ -15,8 +15,6 @@ namespace JoggingApp.Setup
         {
             builder.Services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
 
-            builder.Services.AddTransient<UserRegisteredIntegrationEventHandler>();
-
             builder.Services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
             {
                 var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
@@ -61,9 +59,8 @@ namespace JoggingApp.Setup
                     retryCount = int.Parse(builder.Configuration["EventBus:RetryCount"]);
                 }
 
-                var eventBus = new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
-
-                eventBus.Subscribe<UserRegisteredIntegrationEvent, UserRegisteredIntegrationEventHandler>();
+                var eventBus = new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope,
+                    eventBusSubcriptionsManager, subscriptionClientName, retryCount);
 
                 return eventBus;
             });
