@@ -13,6 +13,7 @@ namespace JoggingApp.Core.Users
             //Expiration time shouldd not be hardcoded. But will leave it as is for this demo purpose
             var activationToken = new UserActivationToken(clock.Now, clock.Now.AddMinutes(2), user);
             user.ActivationTokens.Add(activationToken);
+            user.RaiseUserRegisteredDomainEvent();
             return user;
         }
 
@@ -22,8 +23,6 @@ namespace JoggingApp.Core.Users
             Password = password;
             State = state;
             ActivationTokens = new HashSet<UserActivationToken>();
-
-            RaiseDomainEvent(new UserRegisteredDomainEvent(Email));
         }
 
         public string Email { get; }
@@ -33,6 +32,11 @@ namespace JoggingApp.Core.Users
         public UserState State { get; private set; }
 
         public ICollection<UserActivationToken> ActivationTokens { get; }
+
+        public void RaiseUserRegisteredDomainEvent()
+        {
+            RaiseDomainEvent(new UserRegisteredDomainEvent(Email));
+        }
 
         public void Activate()
         {
