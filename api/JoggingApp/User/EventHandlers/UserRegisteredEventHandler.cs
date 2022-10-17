@@ -1,6 +1,6 @@
 ﻿using JoggingApp.BuildingBlocks.EventBus.Abstractions;
 using JoggingApp.Core.Jog.DomainEvents;
-using JoggingApp.Users.IntegrationEvents;
+using JoggingApp.IntegrationEvents;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,7 +16,7 @@ namespace JoggingApp.Users.EventHandlers
 
         public Task Handle(UserRegisteredDomainEvent @event, CancellationToken cancellationToken)
         {
-            _eventBus.Publish(new UserRegisteredIntegrationEvent(@event.Email));
+            _eventBus.Publish(new SendEmailIntegrationEvent(@event.Email, "Test test 123 !!"));
             return Task.CompletedTask;
         }
     }

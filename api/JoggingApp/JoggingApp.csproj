@@ -31,6 +31,7 @@
     <ProjectReference Include="..\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\JoggingApp.Core\JoggingApp.Core.csproj" />
     <ProjectReference Include="..\JoggingApp.EntityFramework\JoggingApp.EntityFramework.csproj" />
+    <ProjectReference Include="..\JoggingApp.IntegrationEvents\JoggingApp.IntegrationEvents.csproj" />
     <ProjectReference Include="..\JoggingApp.OutboxPublishingAgent\JoggingApp.OutboxPublishingAgent.csproj" />
   </ItemGroup>
 
