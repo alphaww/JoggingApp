@@ -9,7 +9,7 @@ namespace JoggingApp.Jogs.EventHandlers
 {
     public class JogLocationSetEventHandler : IDomainEventHandler<JogLocationSetDomainEvent>
     {
-        private  readonly IWeatherService _weatherService;
+        private readonly IWeatherService _weatherService;
         private readonly IJogStorage _jogStorage;
         public JogLocationSetEventHandler(IWeatherService weatherService, IJogStorage jogStorage)
         {
@@ -18,9 +18,7 @@ namespace JoggingApp.Jogs.EventHandlers
         }
 
         public async Task Handle(JogLocationSetDomainEvent @event, CancellationToken cancellationToken)
-        {
-            Thread.Sleep(100000);
-
+        { 
             var weatherInfo = await _weatherService.FetchWeatherInfoAsync(@event.Coordinates, cancellationToken);
            var jogToUpdate = await _jogStorage.GetByJogIdAsync(@event.JogId, cancellationToken);
            jogToUpdate.SetLocationDetail(@event.Coordinates, weatherInfo);

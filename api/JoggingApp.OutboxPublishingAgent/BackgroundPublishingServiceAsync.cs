@@ -17,6 +17,13 @@ namespace JoggingApp.BackgroundJobs
             TypeNameHandling = TypeNameHandling.All
         };
 
+        private static readonly AsyncRetryPolicy RetryPolicy = 
+            Policy
+            .Handle<Exception>()
+            .WaitAndRetryAsync(3, 
+                attempt => 
+                    TimeSpan.FromMilliseconds(50 * attempt));
+
         private readonly IServiceScopeFactory _scopeFactory;
 
         public BackgroundPublishingServiceAsync(IServiceScopeFactory scopeFactory)
@@ -45,19 +52,21 @@ namespace JoggingApp.BackgroundJobs
             Task.Run(async () =>
             {
                 using var scope = _scopeFactory.CreateScope();
-
                 var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
                 var repository = scope.ServiceProvider.GetRequiredService<IOutboxStorage>();
 
                 var domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(@event.Content, JsonSerializerSettings);
 
-                AsyncRetryPolicy policy = Policy.Handle<Exception>().WaitAndRetryAsync(3, attempt => TimeSpan.FromMilliseconds(50 * attempt));
+                if (domainEvent is null)
+                {
+                    return;
+                }
 
-                PolicyResult publishResult = await policy.ExecuteAndCaptureAsync(() => publisher.Publish(domainEvent, cancellationToken));
+                PolicyResult publishResult = await RetryPolicy.ExecuteAndCaptureAsync(() => publisher.Publish(domainEvent, cancellationToken));
 
                 @event.SetEventState(publishResult.Outcome == OutcomeType.Successful ? OutboxMessageState.Done : OutboxMessageState.Fail);
 
-                await policy.ExecuteAsync(() => repository.UpdateOutboxEventAsync(@event));
+                await repository.UpdateOutboxEventAsync(@event);
             }, 
              cancellationToken);
         }
