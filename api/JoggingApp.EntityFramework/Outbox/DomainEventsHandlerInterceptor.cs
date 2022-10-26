@@ -60,8 +60,7 @@ namespace JoggingApp.EntityFramework.Interceptors
                             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                         });
 
-                    return new OutboxMessage(domainEvent.GetType().Namespace, content, EventType.DomainEvent,
-                        DateTime.UtcNow);
+                    return new OutboxMessage(domainEvent);
 
                 })
                 .ToList();

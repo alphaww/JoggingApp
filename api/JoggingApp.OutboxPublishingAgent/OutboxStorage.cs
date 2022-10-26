@@ -20,7 +20,7 @@ namespace JoggingApp.OutboxPublishingAgent
             return await _queryFactory.Query(nameof(OutboxMessage))
                 .Select(nameof(OutboxMessage.Id), nameof(OutboxMessage.Type), nameof(OutboxMessage.Content),
                     nameof(OutboxMessage.OccurredOnUtc), nameof(OutboxMessage.ProcessedOnUtc), nameof(OutboxMessage.Error))
-                .WhereIn(nameof(OutboxMessage.EventState), new[] { OutboxMessageState.ReadyForProcessing , OutboxMessageState.Fail })
+                .WhereIn(nameof(OutboxMessage.EventState), new[] { OutboxMessageState.Ready , OutboxMessageState.Fail })
                 .OrderBy(nameof(OutboxMessage.OccurredOnUtc))
                 .Take(batchSize)
                 .GetAsync<OutboxMessage>();
@@ -32,6 +32,21 @@ namespace JoggingApp.OutboxPublishingAgent
                 .Query(nameof(OutboxMessage))
                 .Where(nameof(OutboxMessage.Id), outboxEvent.Id)
                 .UpdateAsync(new
+                {
+                    outboxEvent.Type,
+                    outboxEvent.Content,
+                    outboxEvent.EventState,
+                    outboxEvent.OccurredOnUtc,
+                    outboxEvent.ProcessedOnUtc,
+                    outboxEvent.Error
+                });
+        }
+
+        public async Task InsertOutboxEventAsync(OutboxMessage outboxEvent)
+        {
+            await _queryFactory
+                .Query(nameof(OutboxMessage))
+                .InsertAsync(new
                 {
                     outboxEvent.Type,
                     outboxEvent.Content,

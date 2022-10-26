@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\EventBus.RabbitMQ\EventBus.RabbitMQ.csproj" />
     <ProjectReference Include="..\EventBus\EventBus.csproj" />
+    <ProjectReference Include="..\JoggingApp.Core\JoggingApp.Core.csproj" />
   </ItemGroup>
 
 </Project>

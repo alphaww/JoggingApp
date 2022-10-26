@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using Newtonsoft.Json;
 
 namespace JoggingApp.Core.Outbox
 {
@@ -7,16 +8,30 @@ namespace JoggingApp.Core.Outbox
         private OutboxMessage()
         {
         }
-        public OutboxMessage(string type, string content, EventType eventType, DateTime occurredOn, DateTime? processedOnUtc = null, string error = null)
+
+        public OutboxMessage(IEvent @event)
         {
             Id = Guid.NewGuid();
-            Type = type;
-            Content = content;
-            EventType = eventType;
-            EventState = OutboxMessageState.ReadyForProcessing;
-            OccurredOnUtc = occurredOn;
-            ProcessedOnUtc = processedOnUtc;
-            Error = error;
+
+            EventType = @event switch
+            {
+                DomainEventBase => EventType.DomainEvent,
+                IntegrationEventBase => EventType.IntegrationEvent
+            };
+
+            EventState = OutboxMessageState.Ready;
+            Type = @event.GetType().ToString();
+            OccurredOnUtc = DateTime.UtcNow;
+            ProcessedOnUtc = null;
+            Error = null;
+
+            Content = JsonConvert.SerializeObject(
+                @event,
+                new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
         }
 
         public Guid Id { get; }
@@ -25,7 +40,7 @@ namespace JoggingApp.Core.Outbox
 
         public string Content { get; }
 
-        public EventType EventType { get; private set; }
+        public EventType EventType { get; }
 
         public OutboxMessageState EventState { get; private set; }
 

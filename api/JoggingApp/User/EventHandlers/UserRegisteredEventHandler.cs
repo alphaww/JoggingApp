@@ -1,22 +1,22 @@
-﻿using System.Linq;
-using JoggingApp.BuildingBlocks.EventBus.Abstractions;
-using JoggingApp.Core.Jog.DomainEvents;
+﻿using JoggingApp.Core.Jog.DomainEvents;
+using JoggingApp.Core.Outbox;
+using JoggingApp.Core.Users;
 using JoggingApp.IntegrationEvents;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using JoggingApp.Core.Users;
 
 namespace JoggingApp.Users.EventHandlers
 {
     public class UserRegisteredEventHandler : IDomainEventHandler<UserRegisteredDomainEvent>
     {
         private readonly IUserStorage _userStorage;
-        private readonly IEventBus _eventBus;
+        private readonly IOutboxStorage _outboxStorage;
         private readonly UserRegisteredEmailTemplateRenderer _userRegisteredEmailTemplateRenderer;
-        public UserRegisteredEventHandler(IUserStorage userStorage, IEventBus eventBus, UserRegisteredEmailTemplateRenderer userRegisteredEmailTemplateRenderer)
+        public UserRegisteredEventHandler(IUserStorage userStorage, IOutboxStorage outboxStorage, UserRegisteredEmailTemplateRenderer userRegisteredEmailTemplateRenderer)
         {
             _userStorage = userStorage;
-            _eventBus = eventBus;
+            _outboxStorage = outboxStorage;
             _userRegisteredEmailTemplateRenderer = userRegisteredEmailTemplateRenderer;
         }
 
@@ -24,7 +24,8 @@ namespace JoggingApp.Users.EventHandlers
         {
             var user = await _userStorage.FindByEmailAsync(@event.Email, cancellationToken);
             var emailTemplate = await _userRegisteredEmailTemplateRenderer.RenderForUserActivationToken(user.ActivationTokens.Single());
-            _eventBus.Publish(new SendEmailIntegrationEvent(@event.Email, "Confirm account", emailTemplate));
+            var integrationEvent = new SendEmailIntegrationEvent(@event.Email, "Confirm account", emailTemplate);
+            await _outboxStorage.InsertOutboxEventAsync(new OutboxMessage(integrationEvent));
         }
     }
 }
