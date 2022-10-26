@@ -1,7 +1,6 @@
 ﻿namespace JoggingApp.Core.Jog.DomainEvents
 {
-    public sealed record UserRegisteredDomainEvent(string Email) : IDomainEvent
+    public sealed record UserRegisteredDomainEvent(string Email) : DomainEventBase
     {
-        public DomainEventConsistencyStrategy EventConsistencyStrategy => DomainEventConsistencyStrategy.EventualConsistency;
     }
 }

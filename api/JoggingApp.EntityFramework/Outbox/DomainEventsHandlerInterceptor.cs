@@ -47,7 +47,7 @@ namespace JoggingApp.EntityFramework.Interceptors
            return await base.SavingChangesAsync(eventData, result, cancellationToken);
         }
 
-        private async Task ProcessOutboxDispatchEvents(IEnumerable<IDomainEvent> events, CancellationToken cancellationToken)
+        private async Task ProcessOutboxDispatchEvents(IEnumerable<DomainEventBase> events, CancellationToken cancellationToken)
         {
             var outboxMessages = events
                 .Select(domainEvent =>
@@ -69,7 +69,7 @@ namespace JoggingApp.EntityFramework.Interceptors
             await _dbContext.Set<OutboxMessage>().AddRangeAsync(outboxMessages, cancellationToken);
         }
 
-        private async Task ProcessStandardDispatchEvents(IEnumerable<IDomainEvent> events, CancellationToken cancellationToken)
+        private async Task ProcessStandardDispatchEvents(IEnumerable<DomainEventBase> events, CancellationToken cancellationToken)
         {
             foreach (var domainEvent in events)
             {

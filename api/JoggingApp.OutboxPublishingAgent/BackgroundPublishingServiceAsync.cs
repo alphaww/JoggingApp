@@ -80,8 +80,8 @@ namespace JoggingApp.BackgroundJobs
             {
                 return @event switch
                 {
+                    DomainEventBase ev => publisher.Publish(ev, cancellationToken),
                     IntegrationEventBase ev => eventBus.Publish(ev),
-                    IDomainEvent ev => publisher.Publish(ev, cancellationToken),
                     _ => throw new Exception($"Unsupported event type {@event.GetType()}")
                 };
             });

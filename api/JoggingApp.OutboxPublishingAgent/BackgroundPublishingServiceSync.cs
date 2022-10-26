@@ -30,7 +30,7 @@ namespace JoggingApp.OutboxPublishingAgent
 
             foreach (OutboxMessage @event in outboxEvents)
             {
-                IDomainEvent domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(@event.Content, JsonSerializerSettings);
+                DomainEventBase domainEvent = JsonConvert.DeserializeObject<DomainEventBase>(@event.Content, JsonSerializerSettings);
 
                 if (domainEvent is null)
                 {

@@ -5,7 +5,7 @@ namespace JoggingApp.Core
 {
     public class Entity
     {
-        private readonly List<IDomainEvent> _domainEvents = new();
+        private readonly List<DomainEventBase> _domainEvents = new();
         public Guid Id { get; }
 
         protected Entity(Guid id)
@@ -17,21 +17,22 @@ namespace JoggingApp.Core
         {
         }
 
-        public IReadOnlyCollection<IDomainEvent> GetDomainEvents() => _domainEvents.ToList();
+        public IReadOnlyCollection<DomainEventBase> GetDomainEvents() => _domainEvents.ToList();
 
         public void ClearDomainEvents() => _domainEvents.Clear();
 
-        protected void RaiseDomainEvent(IDomainEvent domainEvent) =>
+        protected void RaiseDomainEvent(DomainEventBase domainEvent) =>
             _domainEvents.Add(domainEvent);
     }
 
-    public record IntegrationEventBase : IntegrationEvent, IEvent
+    public abstract record IntegrationEventBase : IntegrationEvent, IEvent
     {
     }
 
-    public interface IDomainEvent : IEvent
+    public abstract record DomainEventBase : IEvent
     {
-        public DomainEventConsistencyStrategy EventConsistencyStrategy { get; }
+        public virtual DomainEventConsistencyStrategy EventConsistencyStrategy => 
+            DomainEventConsistencyStrategy.StandardDispatch;
     }
 
     public interface IEvent : INotification

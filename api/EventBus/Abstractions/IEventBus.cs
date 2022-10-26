@@ -2,7 +2,7 @@
 
 public interface IEventBus
 {
-    void Publish(IntegrationEvent @event);
+    Task Publish(IntegrationEvent @event);
 
     void Subscribe<T, TH>()
         where T : IntegrationEvent

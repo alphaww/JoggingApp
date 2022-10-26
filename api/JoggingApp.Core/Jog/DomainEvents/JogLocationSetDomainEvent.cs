@@ -2,8 +2,9 @@
 
 namespace JoggingApp.Core.Jog.DomainEvents
 {
-    public sealed record JogLocationSetDomainEvent(Guid JogId, Coordinates Coordinates) : IDomainEvent
+    public sealed record JogLocationSetDomainEvent(Guid JogId, Coordinates Coordinates) : DomainEventBase
     {
-        public DomainEventConsistencyStrategy EventConsistencyStrategy => DomainEventConsistencyStrategy.EventualConsistency;
+        public override DomainEventConsistencyStrategy EventConsistencyStrategy => 
+            DomainEventConsistencyStrategy.EventualConsistency;
     }
 }
