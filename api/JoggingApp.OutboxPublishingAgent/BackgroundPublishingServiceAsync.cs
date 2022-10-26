@@ -87,8 +87,7 @@ namespace JoggingApp.BackgroundJobs
             });
 
             message.SetEventState(publishResult.Outcome == OutcomeType.Successful ? 
-                OutboxMessageState.Done :
-                OutboxMessageState.Fail);
+                OutboxMessageState.Done : OutboxMessageState.Fail);
 
             await repository.UpdateOutboxEventAsync(message);
         }
