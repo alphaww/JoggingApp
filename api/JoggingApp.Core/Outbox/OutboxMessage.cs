@@ -16,7 +16,8 @@ namespace JoggingApp.Core.Outbox
             EventType = @event switch
             {
                 DomainEventBase => EventType.DomainEvent,
-                IntegrationEventBase => EventType.IntegrationEvent
+                IntegrationEventBase => EventType.IntegrationEvent,
+                _ => throw new Exception($"Unsupported event type {@event.GetType()}")
             };
 
             EventState = OutboxMessageState.Ready;

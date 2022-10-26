@@ -17,8 +17,7 @@ namespace JoggingApp.EntityFramework.Interceptors
             _publisher = publisher;
         }
 
-        public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
-            InterceptionResult<int> result, CancellationToken cancellationToken = default)
+        public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
         {
             _dbContext = eventData.Context;
 
@@ -36,13 +35,13 @@ namespace JoggingApp.EntityFramework.Interceptors
                 })
                 .ToList();
 
-            await ProcessStandardDispatchEvents(domainEvents.Where(de =>
-                    de.EventConsistencyStrategy == DomainEventConsistencyStrategy.StandardDispatch),
+            await ProcessStandardDispatchEvents(domainEvents
+                .Where(de => de.ConsistencyStrategy == ConsistencyStrategy.StandardDispatch),
                 cancellationToken); 
 
-           await ProcessOutboxDispatchEvents(domainEvents.Where(de =>
-                    de.EventConsistencyStrategy == DomainEventConsistencyStrategy.EventualConsistency),
-                cancellationToken);
+           await ProcessOutboxDispatchEvents(domainEvents
+               .Where(de => de.ConsistencyStrategy == ConsistencyStrategy.EventualConsistency), 
+               cancellationToken);
 
            return await base.SavingChangesAsync(eventData, result, cancellationToken);
         }
@@ -50,19 +49,7 @@ namespace JoggingApp.EntityFramework.Interceptors
         private async Task ProcessOutboxDispatchEvents(IEnumerable<DomainEventBase> events, CancellationToken cancellationToken)
         {
             var outboxMessages = events
-                .Select(domainEvent =>
-                {
-                    var content = JsonConvert.SerializeObject(
-                        domainEvent,
-                        new JsonSerializerSettings
-                        {
-                            TypeNameHandling = TypeNameHandling.All,
-                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                        });
-
-                    return new OutboxMessage(domainEvent);
-
-                })
+                .Select(domainEvent => new OutboxMessage(domainEvent))
                 .ToList();
 
             await _dbContext.Set<OutboxMessage>().AddRangeAsync(outboxMessages, cancellationToken);

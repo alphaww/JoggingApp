@@ -31,15 +31,15 @@ namespace JoggingApp.Core
 
     public abstract record DomainEventBase : IEvent
     {
-        public virtual DomainEventConsistencyStrategy EventConsistencyStrategy => 
-            DomainEventConsistencyStrategy.StandardDispatch;
+        public virtual ConsistencyStrategy ConsistencyStrategy => 
+            ConsistencyStrategy.StandardDispatch;
     }
 
     public interface IEvent : INotification
     {
     }
 
-    public enum DomainEventConsistencyStrategy : int
+    public enum ConsistencyStrategy : int
     {
         StandardDispatch = 1,
         EventualConsistency = 2
