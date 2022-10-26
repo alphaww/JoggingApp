@@ -1,8 +1,10 @@
-﻿namespace JoggingApp.BuildingBlocks.EventBus.Abstractions;
+﻿using System.Threading;
+
+namespace JoggingApp.BuildingBlocks.EventBus.Abstractions;
 
 public interface IEventBus
 {
-    Task Publish(IntegrationEvent @event);
+    Task Publish(IntegrationEvent @event, CancellationToken cancellationToken);
 
     void Subscribe<T, TH>()
         where T : IntegrationEvent

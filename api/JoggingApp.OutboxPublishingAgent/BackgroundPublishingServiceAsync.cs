@@ -19,8 +19,6 @@ namespace JoggingApp.BackgroundJobs
             TypeNameHandling = TypeNameHandling.All
         };
 
-        private static readonly AsyncRetryPolicy RetryPolicy = Policy.Handle<Exception>().WaitAndRetryAsync(3, attempt => TimeSpan.FromMilliseconds(50 * attempt));
-
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ILogger<BackgroundPublishingServiceAsync> _logger;
 
@@ -76,12 +74,15 @@ namespace JoggingApp.BackgroundJobs
                 return;
             }
 
-            PolicyResult publishResult = await RetryPolicy.ExecuteAndCaptureAsync(() =>
+            var retryPolicy = Policy.Handle<Exception>().WaitAndRetryAsync(3, 
+                    attempt => TimeSpan.FromMilliseconds(50 * attempt));
+
+            var publishResult = await retryPolicy.ExecuteAndCaptureAsync(() =>
             {
                 return @event switch
                 {
-                    DomainEventBase ev => publisher.Publish(ev, cancellationToken),
-                    IntegrationEventBase ev => eventBus.Publish(ev),
+                    DomainEventBase e => publisher.Publish(e, cancellationToken),
+                    IntegrationEventBase e => eventBus.Publish(e, cancellationToken),
                     _ => throw new Exception($"Unsupported event type {@event.GetType()}")
                 };
             });

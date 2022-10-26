@@ -47,7 +47,7 @@ public class EventBusRabbitMQ : IEventBus, IDisposable
         }
     }
 
-    public async Task Publish(IntegrationEvent @event)
+    public async Task Publish(IntegrationEvent @event, CancellationToken cancellationToken)
     {
         if (!_persistentConnection.IsConnected)
         {
