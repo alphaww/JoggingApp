@@ -22,9 +22,8 @@ namespace JoggingApp.Users.EventHandlers
 
         public async Task Handle(UserRegisteredDomainEvent @event, CancellationToken cancellationToken)
         {
-            var user = await _userStorage.FindByEmailAsync(@event.Email, cancellationToken);
-            var emailTemplate = await _userRegisteredEmailTemplateRenderer.RenderForUserActivationToken(user.ActivationTokens.Single());
-            var integrationEvent = new SendEmailIntegrationEvent(@event.Email, "Confirm account", emailTemplate);
+            var emailTemplate = await _userRegisteredEmailTemplateRenderer.RenderForUserActivationToken(@event.User.ActivationTokens.Single());
+            var integrationEvent = new SendEmailIntegrationEvent(@event.User.Email, "Confirm account", emailTemplate);
             await _outboxStorage.InsertOutboxEventAsync(new OutboxMessage(integrationEvent));
         }
     }

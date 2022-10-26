@@ -48,6 +48,7 @@ namespace JoggingApp.OutboxPublishingAgent
                 .Query(nameof(OutboxMessage))
                 .InsertAsync(new
                 {
+                    outboxEvent.Id,
                     outboxEvent.Type,
                     outboxEvent.Content,
                     outboxEvent.EventState,

@@ -35,7 +35,7 @@ namespace JoggingApp.Core.Users
 
         public void RaiseUserRegisteredDomainEvent()
         {
-            RaiseDomainEvent(new UserRegisteredDomainEvent(Email));
+            RaiseDomainEvent(new UserRegisteredDomainEvent(this));
         }
 
         public void Activate()
