@@ -19,6 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\EventBus\EventBus.csproj" />
 	  <ProjectReference Include="..\JoggingApp.Core\JoggingApp.Core.csproj" />
 	</ItemGroup>
 

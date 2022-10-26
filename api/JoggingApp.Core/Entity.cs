@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using JoggingApp.BuildingBlocks.EventBus.Events;
+using MediatR;
 
 namespace JoggingApp.Core
 {
@@ -24,9 +25,17 @@ namespace JoggingApp.Core
             _domainEvents.Add(domainEvent);
     }
 
-    public interface IDomainEvent : INotification
+    public record IntegrationEventBase : IntegrationEvent, IEvent
     {
-        DomainEventConsistencyStrategy DomainEventConsistencyStrategy { get; }
+    }
+
+    public interface IDomainEvent : IEvent
+    {
+        public DomainEventConsistencyStrategy EventConsistencyStrategy { get; }
+    }
+
+    public interface IEvent : INotification
+    {
     }
 
     public enum DomainEventConsistencyStrategy : int

@@ -2,6 +2,6 @@
 {
     public sealed record UserRegisteredDomainEvent(string Email) : IDomainEvent
     {
-        public DomainEventConsistencyStrategy DomainEventConsistencyStrategy => DomainEventConsistencyStrategy.EventualConsistency;
+        public DomainEventConsistencyStrategy EventConsistencyStrategy => DomainEventConsistencyStrategy.EventualConsistency;
     }
 }

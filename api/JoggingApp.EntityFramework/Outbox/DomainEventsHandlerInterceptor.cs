@@ -37,11 +37,11 @@ namespace JoggingApp.EntityFramework.Interceptors
                 .ToList();
 
             await ProcessStandardDispatchEvents(domainEvents.Where(de =>
-                    de.DomainEventConsistencyStrategy == DomainEventConsistencyStrategy.StandardDispatch),
+                    de.EventConsistencyStrategy == DomainEventConsistencyStrategy.StandardDispatch),
                 cancellationToken); 
 
            await ProcessOutboxDispatchEvents(domainEvents.Where(de =>
-                    de.DomainEventConsistencyStrategy == DomainEventConsistencyStrategy.EventualConsistency),
+                    de.EventConsistencyStrategy == DomainEventConsistencyStrategy.EventualConsistency),
                 cancellationToken);
 
            return await base.SavingChangesAsync(eventData, result, cancellationToken);

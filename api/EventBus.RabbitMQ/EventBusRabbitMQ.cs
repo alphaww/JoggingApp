@@ -47,7 +47,7 @@ public class EventBusRabbitMQ : IEventBus, IDisposable
         }
     }
 
-    public void Publish(IntegrationEvent @event)
+    public async Task Publish(IntegrationEvent @event)
     {
         if (!_persistentConnection.IsConnected)
         {
@@ -89,6 +89,8 @@ public class EventBusRabbitMQ : IEventBus, IDisposable
                 basicProperties: properties,
                 body: body);
         });
+
+        await Task.CompletedTask;
     }
 
     public void SubscribeDynamic<TH>(string eventName)

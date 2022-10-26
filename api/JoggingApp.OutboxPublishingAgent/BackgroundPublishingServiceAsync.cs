@@ -1,7 +1,9 @@
-﻿using JoggingApp.Core;
+﻿using JoggingApp.BuildingBlocks.EventBus.Abstractions;
+using JoggingApp.Core;
 using JoggingApp.Core.Outbox;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;
 using Polly.Retry;
@@ -17,58 +19,78 @@ namespace JoggingApp.BackgroundJobs
             TypeNameHandling = TypeNameHandling.All
         };
 
-        private static readonly AsyncRetryPolicy RetryPolicy = 
-            Policy
-            .Handle<Exception>()
-            .WaitAndRetryAsync(3, 
-                attempt => 
-                    TimeSpan.FromMilliseconds(50 * attempt));
+        private static readonly AsyncRetryPolicy RetryPolicy = Policy.Handle<Exception>().WaitAndRetryAsync(3, attempt => TimeSpan.FromMilliseconds(50 * attempt));
 
         private readonly IServiceScopeFactory _scopeFactory;
+        private readonly ILogger<BackgroundPublishingServiceAsync> _logger;
 
-        public BackgroundPublishingServiceAsync(IServiceScopeFactory scopeFactory)
+        private static int _executionId = 0;
+        private static DateTime _lastFiredTime = DateTime.MinValue;
+
+        public BackgroundPublishingServiceAsync(IServiceScopeFactory scopeFactory, ILogger<BackgroundPublishingServiceAsync> logger)
         {
             _scopeFactory = scopeFactory;
+            _logger = logger;
         }
 
         public async Task Execute(IJobExecutionContext context)
         {
+            _executionId++;
+
+            if (_lastFiredTime.AddMilliseconds(250) > DateTime.UtcNow)
+            {
+                Console.WriteLine($"Dequeueing {_executionId}");
+                return;
+            }
+
+            _logger.LogInformation($"{_executionId} :: Processing Outbox {DateTime.Now}...");
+
             using var scope = _scopeFactory.CreateScope();
             var repository = scope.ServiceProvider.GetRequiredService<IOutboxStorage>();
 
             var outboxEvents = await repository.GetOutboxEventsAsync();
-            
+
             foreach (var @event in outboxEvents)
             {
                 @event.SetEventState(OutboxMessageState.InTransit);
                 await repository.UpdateOutboxEventAsync(@event);
 
-                HandleEvent(@event, context.CancellationToken);
+                _ = HandleEvent(@event, context.CancellationToken);
             }
+
+            _logger.LogInformation($"  {_executionId} :: Process Outbox Completed {DateTime.Now}");
+            _lastFiredTime = DateTime.UtcNow;
         }
 
-        public void HandleEvent(OutboxMessage @event, CancellationToken cancellationToken)
+        public async Task HandleEvent(OutboxMessage message, CancellationToken cancellationToken)
         {
-            Task.Run(async () =>
+            using var scope = _scopeFactory.CreateScope();
+            var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+            var repository = scope.ServiceProvider.GetRequiredService<IOutboxStorage>();
+            var eventBus = scope.ServiceProvider.GetRequiredService<IEventBus>();
+
+            var @event = JsonConvert.DeserializeObject<IEvent>(message.Content, JsonSerializerSettings);
+
+            if (@event is null)
             {
-                using var scope = _scopeFactory.CreateScope();
-                var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
-                var repository = scope.ServiceProvider.GetRequiredService<IOutboxStorage>();
+                return;
+            }
 
-                var domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(@event.Content, JsonSerializerSettings);
-
-                if (domainEvent is null)
+            PolicyResult publishResult = await RetryPolicy.ExecuteAndCaptureAsync(() =>
+            {
+                return @event switch
                 {
-                    return;
-                }
+                    IntegrationEventBase ev => eventBus.Publish(ev),
+                    IDomainEvent ev => publisher.Publish(ev, cancellationToken),
+                    _ => throw new Exception($"Unsupported event type {@event.GetType()}")
+                };
+            });
 
-                PolicyResult publishResult = await RetryPolicy.ExecuteAndCaptureAsync(() => publisher.Publish(domainEvent, cancellationToken));
+            message.SetEventState(publishResult.Outcome == OutcomeType.Successful ? 
+                OutboxMessageState.Done :
+                OutboxMessageState.Fail);
 
-                @event.SetEventState(publishResult.Outcome == OutcomeType.Successful ? OutboxMessageState.Done : OutboxMessageState.Fail);
-
-                await repository.UpdateOutboxEventAsync(@event);
-            }, 
-             cancellationToken);
+            await repository.UpdateOutboxEventAsync(message);
         }
     }
 }
