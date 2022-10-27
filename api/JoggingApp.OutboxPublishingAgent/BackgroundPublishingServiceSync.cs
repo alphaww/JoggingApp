@@ -26,7 +26,7 @@ namespace JoggingApp.OutboxPublishingAgent
 
         public async Task Execute(IJobExecutionContext context)
         {
-            var outboxEvents = await _outboxStorage.MarkAsTransitAndFetchReadyOutboxEventsAsync();
+            var outboxEvents = await _outboxStorage.MarkAndGetOutboxEvents();
 
             foreach (OutboxMessage @event in outboxEvents)
             {

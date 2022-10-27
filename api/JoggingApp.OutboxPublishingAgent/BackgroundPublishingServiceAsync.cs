@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;
-using Polly.Retry;
 using Quartz;
 
 namespace JoggingApp.BackgroundJobs
@@ -22,11 +21,8 @@ namespace JoggingApp.BackgroundJobs
 
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ILogger<BackgroundPublishingServiceAsync> _logger;
-
-        private static int _executionId = 0;
-        private static DateTime _lastFiredTime = DateTime.MinValue;
-
-        public BackgroundPublishingServiceAsync(IServiceScopeFactory scopeFactory, ILogger<BackgroundPublishingServiceAsync> logger)
+        public BackgroundPublishingServiceAsync(IServiceScopeFactory scopeFactory,
+            ILogger<BackgroundPublishingServiceAsync> logger)
         {
             _scopeFactory = scopeFactory;
             _logger = logger;
@@ -36,32 +32,17 @@ namespace JoggingApp.BackgroundJobs
         {
             try
             {
-                _executionId++;
-
-                if (_lastFiredTime.AddMilliseconds(250) > DateTime.UtcNow)
-                {
-                    _logger.LogInformation($"Dequeueing {_executionId}");
-                    return;
-                }
-
-                _logger.LogInformation($"{_executionId} :: Processing Outbox {DateTime.Now}...");
-
-           
                 using var scope = _scopeFactory.CreateScope();
                 var repository = scope.ServiceProvider.GetRequiredService<IOutboxStorage>();
-                var logger = scope.ServiceProvider.GetRequiredService<ILogger<BackgroundPublishingServiceAsync>>(); 
 
-                var processableOutboxEvents = await repository.MarkAsTransitAndFetchReadyOutboxEventsAsync();
+                var processableOutboxEvents = await repository.MarkAndGetOutboxEvents();
                 
                 foreach (var @event in processableOutboxEvents)
                 {
                     HandleEvent(@event, context.CancellationToken)
-                        .SafeFireAndForget(onException: (ex) => _logger.LogError(ex.ToString()) );
+                        .SafeFireAndForget(onException: (ex) => 
+                            _logger.LogError(ex.ToString()) );
                 }
-
-                _logger.LogInformation($"  {_executionId} :: Process Outbox Completed {DateTime.Now}");
-                _lastFiredTime = DateTime.UtcNow;
-
             }
             catch (Exception ex)
             {

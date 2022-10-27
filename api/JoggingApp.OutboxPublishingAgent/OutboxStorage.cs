@@ -15,31 +15,68 @@ namespace JoggingApp.OutboxPublishingAgent
             _queryFactory = queryFactory;
         }
 
-        public async Task<IEnumerable<OutboxMessage>> MarkAsTransitAndFetchReadyOutboxEventsAsync(int batchSize = 10)
+        public async Task<IEnumerable<OutboxMessage>> MarkAndGetOutboxEvents(int batchSize = 10)
         {
-            return await _queryFactory.Query(nameof(OutboxMessage))
-                .Select(nameof(OutboxMessage.Id), nameof(OutboxMessage.Type), nameof(OutboxMessage.Content),
-                    nameof(OutboxMessage.OccurredOnUtc), nameof(OutboxMessage.ProcessedOnUtc), nameof(OutboxMessage.Error))
-                .WhereIn(nameof(OutboxMessage.EventState), new[] { OutboxMessageState.Ready , OutboxMessageState.Fail })
-                .OrderBy(nameof(OutboxMessage.OccurredOnUtc))
-                .Take(batchSize)
+            //var q = _queryFactory.Query(nameof(OutboxMessage))
+            //    .Select(nameof(OutboxMessage.Id), nameof(OutboxMessage.Type), nameof(OutboxMessage.Content),
+            //        nameof(OutboxMessage.OccurredOnUtc), nameof(OutboxMessage.ProcessedOnUtc), nameof(OutboxMessage.Error))
+            //    .WhereIn(nameof(OutboxMessage.EventState), new[] { OutboxMessageState.Ready , OutboxMessageState.Fail })
+            //    .OrderBy(nameof(OutboxMessage.OccurredOnUtc))
+            //    .Take(batchSize);
+
+            //var sqlText = _queryFactory.Compiler.Compile(q).Sql;
+
+            //return await q.GetAsync<OutboxMessage>();
+
+            //using (var connection = new SqlConnection(_connectionString))
+            //{
+            //    connection.Open();
+            //    var changes = await connection.QueryAsync<OutboxMessage>(sql).ConfigureAwait(false);
+            //    return changes;
+            //}
+
+            var sql = @"BEGIN TRANSACTION
+
+            DECLARE @UpdatedIDs table(Id UNIQUEIDENTIFIER)
+            UPDATE[OutboxMessage] SET[EventState] = 2
+            OUTPUT inserted.Id
+                INTO @UpdatedIDs WHERE[EventState] = @p1 OR[EventState] = @p2;
+
+            SELECT* FROM[OutboxMessage] m
+                WHERE
+            EXISTS
+                (SELECT 1 FROM @UpdatedIDs m2 WHERE m.Id = m2.Id)
+
+            COMMIT";
+
+            return await _queryFactory
+                .Query()
+                .SelectRaw(sql, 
+                    new[]
+                    {
+                        OutboxMessageState.Ready, 
+                        OutboxMessageState.Fail
+                    })
                 .GetAsync<OutboxMessage>();
         }
 
         public async Task UpdateOutboxEventAsync(OutboxMessage outboxEvent)
         {
-            await _queryFactory
+            var q = _queryFactory
                 .Query(nameof(OutboxMessage))
-                .Where(nameof(OutboxMessage.Id), outboxEvent.Id)
-                .UpdateAsync(new
-                {
-                    outboxEvent.Type,
-                    outboxEvent.Content,
-                    outboxEvent.EventState,
-                    outboxEvent.OccurredOnUtc,
-                    outboxEvent.ProcessedOnUtc,
-                    outboxEvent.Error
-                });
+                .Where(nameof(OutboxMessage.Id), outboxEvent.Id);
+
+            var sqlText = _queryFactory.Compiler.Compile(q).Sql;
+
+            await q.UpdateAsync(new
+            {
+                outboxEvent.Type,
+                outboxEvent.Content,
+                outboxEvent.EventState,
+                outboxEvent.OccurredOnUtc,
+                outboxEvent.ProcessedOnUtc,
+                outboxEvent.Error
+            });
         }
 
         public async Task InsertOutboxEventAsync(OutboxMessage outboxEvent)
