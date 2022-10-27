@@ -17,47 +17,22 @@ namespace JoggingApp.OutboxPublishingAgent
 
         public async Task<IEnumerable<OutboxMessage>> MarkAndGetOutboxEvents(int batchSize = 10)
         {
-            //var q = _queryFactory.Query(nameof(OutboxMessage))
-            //    .Select(nameof(OutboxMessage.Id), nameof(OutboxMessage.Type), nameof(OutboxMessage.Content),
-            //        nameof(OutboxMessage.OccurredOnUtc), nameof(OutboxMessage.ProcessedOnUtc), nameof(OutboxMessage.Error))
-            //    .WhereIn(nameof(OutboxMessage.EventState), new[] { OutboxMessageState.Ready , OutboxMessageState.Fail })
-            //    .OrderBy(nameof(OutboxMessage.OccurredOnUtc))
-            //    .Take(batchSize);
+            const string sql = @"BEGIN TRANSACTION
 
-            //var sqlText = _queryFactory.Compiler.Compile(q).Sql;
+            DECLARE @UpdatedIDs table (Id UNIQUEIDENTIFIER)
+            UPDATE [OutboxMessage] SET [EventState] = 2 
+            OUTPUT inserted.Id 
+            INTO @UpdatedIDs
+            WHERE [EventState] = 1 OR [EventState] = 4;
 
-            //return await q.GetAsync<OutboxMessage>();
-
-            //using (var connection = new SqlConnection(_connectionString))
-            //{
-            //    connection.Open();
-            //    var changes = await connection.QueryAsync<OutboxMessage>(sql).ConfigureAwait(false);
-            //    return changes;
-            //}
-
-            var sql = @"BEGIN TRANSACTION
-
-            DECLARE @UpdatedIDs table(Id UNIQUEIDENTIFIER)
-            UPDATE[OutboxMessage] SET[EventState] = 2
-            OUTPUT inserted.Id
-                INTO @UpdatedIDs WHERE[EventState] = @p1 OR[EventState] = @p2;
-
-            SELECT* FROM[OutboxMessage] m
-                WHERE
-            EXISTS
+            SELECT * FROM [OutboxMessage] m 
+            WHERE 
+              EXISTS 
                 (SELECT 1 FROM @UpdatedIDs m2 WHERE m.Id = m2.Id)
 
             COMMIT";
 
-            return await _queryFactory
-                .Query()
-                .SelectRaw(sql, 
-                    new[]
-                    {
-                        OutboxMessageState.Ready, 
-                        OutboxMessageState.Fail
-                    })
-                .GetAsync<OutboxMessage>();
+            return await _queryFactory.SelectAsync<OutboxMessage>(sql);
         }
 
         public async Task UpdateOutboxEventAsync(OutboxMessage outboxEvent)
