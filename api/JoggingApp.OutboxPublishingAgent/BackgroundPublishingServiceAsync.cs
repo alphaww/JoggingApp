@@ -46,11 +46,11 @@ namespace JoggingApp.BackgroundJobs
             using var scope = _scopeFactory.CreateScope();
             var repository = scope.ServiceProvider.GetRequiredService<IOutboxStorage>();
 
-            var outboxEvents = await repository.GetOutboxEventsAsync();
+            var processableOutboxEvents = await repository.MarkAsTransitAndFetchReadyOutboxEventsAsync();
 
-            foreach (var @event in outboxEvents)
+            foreach (var @event in processableOutboxEvents)
             {
-                @event.SetEventState(OutboxMessageState.InTransit);
+                @event.SetEventState(OutboxMessageState.Transit);
                 await repository.UpdateOutboxEventAsync(@event);
 
                 _ = HandleEvent(@event, context.CancellationToken);

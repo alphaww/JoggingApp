@@ -15,7 +15,7 @@ namespace JoggingApp.OutboxPublishingAgent
             _queryFactory = queryFactory;
         }
 
-        public async Task<IEnumerable<OutboxMessage>> GetOutboxEventsAsync(int batchSize = 10)
+        public async Task<IEnumerable<OutboxMessage>> MarkAsTransitAndFetchReadyOutboxEventsAsync(int batchSize = 10)
         {
             return await _queryFactory.Query(nameof(OutboxMessage))
                 .Select(nameof(OutboxMessage.Id), nameof(OutboxMessage.Type), nameof(OutboxMessage.Content),
