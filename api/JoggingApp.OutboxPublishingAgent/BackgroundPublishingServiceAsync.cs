@@ -1,6 +1,7 @@
 ﻿using JoggingApp.BuildingBlocks.EventBus.Abstractions;
 using JoggingApp.Core;
 using JoggingApp.Core.Outbox;
+using JoggingApp.Core.Utils;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -33,31 +34,39 @@ namespace JoggingApp.BackgroundJobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            _executionId++;
-
-            if (_lastFiredTime.AddMilliseconds(250) > DateTime.UtcNow)
+            try
             {
-                Console.WriteLine($"Dequeueing {_executionId}");
-                return;
+                _executionId++;
+
+                if (_lastFiredTime.AddMilliseconds(250) > DateTime.UtcNow)
+                {
+                    _logger.LogInformation($"Dequeueing {_executionId}");
+                    return;
+                }
+
+                _logger.LogInformation($"{_executionId} :: Processing Outbox {DateTime.Now}...");
+
+           
+                using var scope = _scopeFactory.CreateScope();
+                var repository = scope.ServiceProvider.GetRequiredService<IOutboxStorage>();
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<BackgroundPublishingServiceAsync>>(); 
+
+                var processableOutboxEvents = await repository.MarkAsTransitAndFetchReadyOutboxEventsAsync();
+                
+                foreach (var @event in processableOutboxEvents)
+                {
+                    HandleEvent(@event, context.CancellationToken)
+                        .SafeFireAndForget(onException: (ex) => _logger.LogError(ex.ToString()) );
+                }
+
+                _logger.LogInformation($"  {_executionId} :: Process Outbox Completed {DateTime.Now}");
+                _lastFiredTime = DateTime.UtcNow;
+
             }
-
-            _logger.LogInformation($"{_executionId} :: Processing Outbox {DateTime.Now}...");
-
-            using var scope = _scopeFactory.CreateScope();
-            var repository = scope.ServiceProvider.GetRequiredService<IOutboxStorage>();
-
-            var processableOutboxEvents = await repository.MarkAsTransitAndFetchReadyOutboxEventsAsync();
-
-            foreach (var @event in processableOutboxEvents)
+            catch (Exception ex)
             {
-                @event.SetEventState(OutboxMessageState.Transit);
-                await repository.UpdateOutboxEventAsync(@event);
-
-                _ = HandleEvent(@event, context.CancellationToken);
+                _logger.LogError(ex.ToString());
             }
-
-            _logger.LogInformation($"  {_executionId} :: Process Outbox Completed {DateTime.Now}");
-            _lastFiredTime = DateTime.UtcNow;
         }
 
         public async Task HandleEvent(OutboxMessage message, CancellationToken cancellationToken)
@@ -74,8 +83,8 @@ namespace JoggingApp.BackgroundJobs
                 return;
             }
 
-            var retryPolicy = Policy.Handle<Exception>().WaitAndRetryAsync(3, 
-                    attempt => TimeSpan.FromMilliseconds(50 * attempt));
+            var retryPolicy = Policy.Handle<Exception>().WaitAndRetryAsync(3,
+                attempt => TimeSpan.FromMilliseconds(50 * attempt));
 
             var publishResult = await retryPolicy.ExecuteAndCaptureAsync(() =>
             {
@@ -87,9 +96,9 @@ namespace JoggingApp.BackgroundJobs
                 };
             });
 
-            message.SetEventState(publishResult.Outcome == OutcomeType.Successful ? 
-                OutboxMessageState.Done : 
-                OutboxMessageState.Fail);
+            message.SetEventState(publishResult.Outcome == OutcomeType.Successful
+                ? OutboxMessageState.Done
+                : OutboxMessageState.Fail);
 
             await repository.UpdateOutboxEventAsync(message);
         }
