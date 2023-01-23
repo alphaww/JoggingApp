@@ -42,7 +42,7 @@ namespace JoggingApp.EntityFramework
         {
             return await _context.Users
                 .Include(user => user.ActivationTokens)
-                .SingleOrDefaultAsync(user => user.ActivationTokens.Any(t => t.Id == activationTokenId));
+                .SingleOrDefaultAsync(user => user.ActivationTokens.Any(t => t.Id == activationTokenId), cancellation);
         }
     }
 }
