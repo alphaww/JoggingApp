@@ -1,73 +1,53 @@
-﻿using Dapper;
-using JoggingApp.Core.Outbox;
-using Microsoft.Data.SqlClient;
-using SqlKata;
+﻿using JoggingApp.Core.Outbox;
 using SqlKata.Execution;
+using System.Data;
+using System.Data.Common;
+using Dapper;
 
 namespace JoggingApp.OutboxPublishingAgent
 {
     public class OutboxStorage : IOutboxStorage
     {
-        private readonly QueryFactory _queryFactory;
+        private readonly IDbConnection _connection;
 
-        public OutboxStorage(QueryFactory queryFactory)
+        public OutboxStorage(IDbConnection connection)
         {
-            _queryFactory = queryFactory;
+            _connection = connection;
         }
 
-        public async Task<IEnumerable<OutboxMessage>> MarkAndGetOutboxEvents(int batchSize = 10)
+
+        public async Task<IEnumerable<OutboxMessage>> MarkAndGetOutboxEvents()
         {
-            const string sql = @"BEGIN TRANSACTION
+            var now = DateTime.UtcNow;
+            var sql = @"UPDATE outbox SET ProcessStartedAt = @now, EventState = @pendingState 
+                WHERE EventState = @readyState AND ProcessStartedAt IS NULL 
+                AND OccurredOnUtc <= @now 
+                OUTPUT inserted.*";
 
-            DECLARE @UpdatedIDs table (Id UNIQUEIDENTIFIER)
-            UPDATE [OutboxMessage] SET [EventState] = 2 
-            OUTPUT inserted.Id 
-            INTO @UpdatedIDs
-            WHERE [EventState] = 1 OR [EventState] = 4;
+            using var transaction = _connection.BeginTransaction();
+            var outboxEvents = await _connection.QueryAsync<OutboxMessage>(sql,
+                new { now, pendingState = OutboxMessageState.Pending, readyState = OutboxMessageState.Ready },
+                transaction);
 
-            SELECT * FROM [OutboxMessage] m 
-            WHERE 
-              EXISTS 
-                (SELECT 1 FROM @UpdatedIDs m2 WHERE m.Id = m2.Id)
+            transaction.Commit();
 
-            COMMIT";
-
-            return await _queryFactory.SelectAsync<OutboxMessage>(sql);
+            return outboxEvents.ToList();
         }
 
         public async Task UpdateOutboxEventAsync(OutboxMessage outboxEvent)
         {
-            var q = _queryFactory
-                .Query(nameof(OutboxMessage))
-                .Where(nameof(OutboxMessage.Id), outboxEvent.Id);
+            var sql = @"UPDATE outbox SET EventState = @EventState, ProcessedOnUtc = @ProcessedOnUtc, Error = @Error 
+                WHERE Id = @Id";
 
-            var sqlText = _queryFactory.Compiler.Compile(q).Sql;
-
-            await q.UpdateAsync(new
-            {
-                outboxEvent.Type,
-                outboxEvent.Content,
-                outboxEvent.EventState,
-                outboxEvent.OccurredOnUtc,
-                outboxEvent.ProcessedOnUtc,
-                outboxEvent.Error
-            });
+            await _connection.ExecuteAsync(sql, outboxEvent);
         }
 
         public async Task InsertOutboxEventAsync(OutboxMessage outboxEvent)
         {
-            await _queryFactory
-                .Query(nameof(OutboxMessage))
-                .InsertAsync(new
-                {
-                    outboxEvent.Id,
-                    outboxEvent.Type,
-                    outboxEvent.Content,
-                    outboxEvent.EventState,
-                    outboxEvent.OccurredOnUtc,
-                    outboxEvent.ProcessedOnUtc,
-                    outboxEvent.Error
-                });
+            var sql = @"INSERT INTO outbox (Id, Type, Content, EventType, EventState, OccurredOnUtc, ProcessedOnUtc, Error)
+                VALUES (@Id, @Type, @Content, @EventType, @EventState, @OccurredOnUtc, @ProcessedOnUtc, @Error)";
+
+            await _connection.ExecuteAsync(sql, outboxEvent);
         }
     }
 }
