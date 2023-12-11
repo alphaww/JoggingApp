@@ -74,3 +74,4 @@ api/JoggingApp/obj/Debug/net6.0/JoggingApp.csproj.BuildWithSkipAnalyzers
 *.manifest
 *.BuildWithSkipAnalyzers
 *.testlog
+/api/JoggingApp.Core/obj/Debug/net6.0/_IsIncrementalBuild
